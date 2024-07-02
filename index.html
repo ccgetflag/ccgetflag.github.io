@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="John Doe">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Hexo"/>
+    
+
+    <!--Open Graph Description-->
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="Hexo"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    
+        <meta name="twitter:card" content="summary" />
+    
+    
+    
+
+    <!-- Title -->
+    
+    <title>Hexo</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    <!-- Google Analytics -->
+    
+
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    Home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    Archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about.html">
+                    About
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/tags">
+                    Tags
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/categories">
+                    Categories
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact.html">
+                    Contact
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa fa-cube" aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">Hexo</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2024/07/02/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">
+                BUUCTF_WEB刷题记录
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2024-07-02</span>
+            
+            
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <h6 id="1-极客大挑战-2019-EasySQL"><a href="#1-极客大挑战-2019-EasySQL" class="headerlink" title="1.[极客大挑战 2019]EasySQL"></a>1.[极客大挑战 2019]EasySQL</h6><p>sql注入题</p>
+<p>判断是字符型还是数字型</p>
+<p>当输入1’时出现如下报错</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702093600504.png" alt="image-20240702093600504"></p>
+<p>单引号字符型注入</p>
+<p>字符型万能密码输入1’ or 1&#x3D;1#即可。这题用户名密码都存在注入点</p>
+<h6 id="2-极客大挑战-2019-Havefun"><a href="#2-极客大挑战-2019-Havefun" class="headerlink" title="2.[极客大挑战 2019]Havefun"></a>2.[极客大挑战 2019]Havefun</h6><p>打开查看器发现</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702094146562.png" alt="image-20240702094146562"></p>
+<p>get传参cat&#x3D;dog即可</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702094250852.png" alt="image-20240702094250852"></p>
+<h6 id="3-HCTF-2018-WarmUp"><a href="#3-HCTF-2018-WarmUp" class="headerlink" title="3.[HCTF 2018]WarmUp"></a>3.[HCTF 2018]WarmUp</h6><p>f12打开查看器发现提示source.php</p>
+<p>进去后进行代码审计</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);  </span><br><span class="line">       <span class="class"><span class="keyword">class</span> <span class="title">emmm</span></span></span><br><span class="line"><span class="class">       </span>&#123;</span><br><span class="line">           <span class="keyword">public</span> <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">checkFile</span>(<span class="params">&amp;<span class="variable">$page</span></span>)    </span></span><br><span class="line"><span class="function">           </span>&#123;      </span><br><span class="line">               <span class="comment">//白名单</span></span><br><span class="line">               <span class="variable">$whitelist</span> = [<span class="string">&quot;source&quot;</span>=&gt;<span class="string">&quot;source.php&quot;</span>,<span class="string">&quot;hint&quot;</span>=&gt;<span class="string">&quot;hint.php&quot;</span>];      </span><br><span class="line">               <span class="comment">//isset判断变量是否存在，is_string检查是否为字符串，因为用的||或，并且前面加了！，所以两个都为真才能绕过</span></span><br><span class="line">               <span class="keyword">if</span> (! <span class="keyword">isset</span>(<span class="variable">$page</span>) || !<span class="title function_ invoke__">is_string</span>(<span class="variable">$page</span>)) &#123;        </span><br><span class="line">                   <span class="keyword">echo</span> <span class="string">&quot;you can&#x27;t see it&quot;</span>;        </span><br><span class="line">                   <span class="keyword">return</span> <span class="literal">false</span>;      </span><br><span class="line">               &#125;    </span><br><span class="line">               <span class="comment">//检查变量是否在白名单里，是则返回true</span></span><br><span class="line">               <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$page</span>, <span class="variable">$whitelist</span>)) &#123;       </span><br><span class="line">                   <span class="keyword">return</span> <span class="literal">true</span>;      </span><br><span class="line">               &#125;  </span><br><span class="line">               <span class="comment">//读取？之前的值，这里其实是读取第一个？出现的位置</span></span><br><span class="line">               <span class="variable">$_page</span> = <span class="title function_ invoke__">mb_substr</span>(    </span><br><span class="line">                   <span class="variable">$page</span>,       </span><br><span class="line">                   <span class="number">0</span>,        </span><br><span class="line">                   <span class="title function_ invoke__">mb_strpos</span>(<span class="variable">$page</span> . <span class="string">&#x27;?&#x27;</span>, <span class="string">&#x27;?&#x27;</span>)   </span><br><span class="line">               ); </span><br><span class="line">               <span class="comment">//再次检查</span></span><br><span class="line">               <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$_page</span>, <span class="variable">$whitelist</span>)) &#123; </span><br><span class="line">                   <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">               &#125;    </span><br><span class="line">               <span class="comment">//对传进来的值进行url解码</span></span><br><span class="line">               <span class="variable">$_page</span> = <span class="title function_ invoke__">urldecode</span>(<span class="variable">$page</span>);    </span><br><span class="line">               <span class="comment">//再次判断问号</span></span><br><span class="line">               <span class="variable">$_page</span> = <span class="title function_ invoke__">mb_substr</span>(        </span><br><span class="line">                   <span class="variable">$_page</span>,   </span><br><span class="line">                   <span class="number">0</span>, </span><br><span class="line">                   <span class="title function_ invoke__">mb_strpos</span>(<span class="variable">$_page</span> . <span class="string">&#x27;?&#x27;</span>, <span class="string">&#x27;?&#x27;</span>) </span><br><span class="line">               ); </span><br><span class="line">               <span class="comment">//再次检查白名单</span></span><br><span class="line">               <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$_page</span>, <span class="variable">$whitelist</span>)) &#123;    </span><br><span class="line">                   <span class="keyword">return</span> <span class="literal">true</span>;   </span><br><span class="line">               &#125;      </span><br><span class="line">               <span class="keyword">echo</span> <span class="string">&quot;you can&#x27;t see it&quot;</span>;    </span><br><span class="line">               <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (! <span class="keyword">empty</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;file&#x27;</span>])<span class="comment">//判断变量是否为空</span></span><br><span class="line">        &amp;&amp; <span class="title function_ invoke__">is_string</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;file&#x27;</span>])<span class="comment">//判断是否是字符串</span></span><br><span class="line">        &amp;&amp; emmm::<span class="title function_ invoke__">checkFile</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;file&#x27;</span>])<span class="comment">//是否在白名单内</span></span><br><span class="line">    ) &#123;</span><br><span class="line">        <span class="keyword">include</span> <span class="variable">$_REQUEST</span>[<span class="string">&#x27;file&#x27;</span>];<span class="comment">//文件包含</span></span><br><span class="line">        <span class="keyword">exit</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&lt;img src=\&quot;https://i.loli.net/2018/11/01/5bdb0d93dc794.jpg\&quot; /&gt;&quot;</span>;</span><br><span class="line">    &#125;  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>我们先访问hint.php看看</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702102216497.png" alt="image-20240702102216497"></p>
+<p>发现flag在ffffllllaaaagggg，这个文件名也提示我们要目录穿越。所以最终为：</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702102400225.png" alt="image-20240702102400225"></p>
+<h6 id="4-ACTF2020-新生赛-Include"><a href="#4-ACTF2020-新生赛-Include" class="headerlink" title="4.[ACTF2020 新生赛]Include"></a>4.[ACTF2020 新生赛]Include</h6><p>题目名字就提示是文件包含</p>
+<p>进去后打开，有个tips，点进去后发现url变了</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702103044524.png" alt="image-20240702103044524"></p>
+<p>我们直接用php伪协议读取flag.php试试</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702103148383.png" alt="image-20240702103148383"></p>
+<p>base64解码即可</p>
+<h6 id="5-ACTF2020-新生赛-Exec"><a href="#5-ACTF2020-新生赛-Exec" class="headerlink" title="5.[ACTF2020 新生赛]Exec"></a>5.[ACTF2020 新生赛]Exec</h6><p>ping页面，试一下本地127.0.0.1</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702104739757.png" alt="image-20240702104739757"></p>
+<p>ping通了，加一个ls看看能否命令执行</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702104836662.png" alt="image-20240702104836662"></p>
+<p>那直接cat flag</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702104915063.png" alt="image-20240702104915063"></p>
+<h6 id="6-GXYCTF2019-Ping-Ping-Ping"><a href="#6-GXYCTF2019-Ping-Ping-Ping" class="headerlink" title="6.[GXYCTF2019]Ping Ping Ping"></a>6.[GXYCTF2019]Ping Ping Ping</h6><p>与上题相同，但是加了过滤</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702105851687.png" alt="image-20240702105851687"></p>
+<p>过滤空格，用${IFS}过滤</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702105947970.png" alt="image-20240702105947970"></p>
+<p>估计是过滤了{}符号，我们用$IFS来过滤空格</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702110117242.png" alt="image-20240702110117242"></p>
+<p>过滤了flag,利用拼接绕过</p>
+<p>这里注意不能?ip&#x3D;1;a&#x3D;fl;b&#x3D;ag;cat$IFS$a$b.php这样传参</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702111800919.png" alt="image-20240702111800919"></p>
+<p>因为源代码里规定flag不能顺序出现</p>
+<p>所以最终payload：?ip&#x3D;1;b&#x3D;ag;c&#x3D;fl;cat$IFS$c$b.php  flag在源代码，查看源代码即可</p>
+<h6 id="7-SUCTF-2019-EasySQL"><a href="#7-SUCTF-2019-EasySQL" class="headerlink" title="7.[SUCTF 2019]EasySQL"></a>7.[SUCTF 2019]EasySQL</h6><p>easysql但我觉得不easy啊，ε&#x3D;(´ο｀*)))唉是我太菜了</p>
+<p>试了集中注入都不行，最后堆叠注入可以</p>
+<p>直接查表</p>
+<p><img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702113034649.png" alt="image-20240702113034649"></p>
+<p>有个Flag；<img src="C:\Users\ASUS\AppData\Roaming\Typora\typora-user-images\image-20240702113145243.png" alt="image-20240702113145243"></p>
+<p>有过滤，这题过滤了很多，后面看大佬们的wp才知道，后端语句是</p>
+<p>select $_POST[‘query’] || flag from Flag</p>
+<p>所以我们之间传入*，1</p>
+<p>这时变为select  *，1|| flag from Flag。这样就可以查询表中所有信息了</p>
+
+        </div>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 footer-about">
+                <h2>About</h2>
+                <p>
+                    This theme was developed by <a target="_blank" rel="noopener" href="https://github.com/klugjo">Jonathan Klughertz</a>. The source code is available on Github. Create Websites. Make Magic.
+                </p>
+            </div>
+            
+    <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 recent-posts">
+        <h2>Recent Posts</h2>
+        <ul>
+            
+            <li>
+                <a class="footer-post" href="/2024/07/02/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">BUUCTF_WEB刷题记录</a>
+            </li>
+            
+        </ul>
+    </div>
+
+
+
+            
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://github.com/klugjo/hexo-theme-alpha-dust">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://twitter.com/?lang=en">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://www.facebook.com/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://www.instagram.com/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://dribbble.com/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://telegram.org/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-telegram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://www.behance.net/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-behance"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a target="_blank" rel="noopener" href="https://500px.com/">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-500px"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:test@example.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="\#">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-rss"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    @Untitled. All right reserved | Design & Hexo <a target="_blank" rel="noopener" href="http://www.codeblocq.com/">Jonathan Klughertz</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>
