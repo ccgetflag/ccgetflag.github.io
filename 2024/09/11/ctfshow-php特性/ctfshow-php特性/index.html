@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
 
   <meta name="description" content="web89
-数组绕过：preg_match当检测的变量是数组的时候会报错并返回0。而intval函数当传入的变量也是数组的时候，会返回1">
+数组绕过：preg_match当检测的变量是数组的时候会报错并返回0。而intval函数当传入的变量也是数组的时候， 空数组 返回 0         非空数组 返回 1
+?num[]&amp;#x3D;1
+web90
+字符串来绕过强相等，intval函数取字母前面的作为整数。
+web91
+&amp;#">
 
 
 <link rel="alternate" href="/atom.xml" title="ccgetflag" type="application/atom+xml">
@@ -43,7 +48,93 @@
     </header>
 </article>
 <section id="post-body"><h3 id="web89"><a href="#web89" class="headerlink" title="web89"></a>web89</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/1.png"></p>
-<p>数组绕过：preg_match当检测的变量是数组的时候会报错并返回0。而intval函数当传入的变量也是数组的时候，会返回1</p>
+<p>数组绕过：preg_match当检测的变量是数组的时候会报错并返回0。而intval函数当传入的变量也是数组的时候， 空数组 返回 0         非空数组 返回 1</p>
+<p>?num[]&#x3D;1</p>
+<h3 id="web90"><a href="#web90" class="headerlink" title="web90"></a>web90</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/2.png"></p>
+<p>字符串来绕过强相等，intval函数取字母前面的作为整数。</p>
+<h3 id="web91"><a href="#web91" class="headerlink" title="web91"></a>web91</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/3.png"></p>
+<p>&#x2F;m模式可以匹配多行，第二个if只能匹配单行。我们利用换行符，让php在第二行输出，这样就能进入第一个if而不进入第二个if</p>
+<h3 id="web92"><a href="#web92" class="headerlink" title="web92"></a>web92</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/4.png"></p>
+<p>科学技术法绕过</p>
+<h3 id="web93"><a href="#web93" class="headerlink" title="web93"></a>web93</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/5.png"></p>
+<p>过滤了字母，不能用科学计数法了，但是可以用进制转换，我们用8进制，0X？？？</p>
+<p>x可以省略</p>
+<h3 id="web94"><a href="#web94" class="headerlink" title="web94"></a>web94</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/6.png"></p>
+<h3 id="web95"><a href="#web95" class="headerlink" title="web95"></a>web95</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/7.png"></p>
+<p>不能用小数了，前面加个正号。</p>
+<h3 id="web96"><a href="#web96" class="headerlink" title="web96"></a>web96</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/8.png"></p>
+<p>被这个老函数秀了。一直填flag.php没反应,原来要填路径</p>
+<p>payload: ?u&#x3D;.&#x2F;flag.php</p>
+<h3 id="web97"><a href="#web97" class="headerlink" title="web97"></a>web97</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/9.png"></p>
+<p>MD5绕过，没啥意思</p>
+<h3 id="web98"><a href="#web98" class="headerlink" title="web98"></a>web98</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/10.png"></p>
+<p>我们直接来直接的，第一行get传参替换成post传参，最后一行代码取HTTP_FLAG等于flag。</p>
+<p>我们随便get传参一个，然后post传参HTTP_FLAG&#x3D;flag。这样get传参就会取自post传参，post内容就会变成get传参内容直接输出flag了</p>
+<p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/11.png"></p>
+<h3 id="web99"><a href="#web99" class="headerlink" title="web99"></a>web99</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/12.png"></p>
+<p>array_push将rand()随机数的值推入数组尾部，in_array函数检查n的值是否在$allow数组中。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在弱类型中当php字符串和int比较时,字符串会被转换成int，所以 字符串中数字后面的字符串会被忽略。题目中的in_array没有设置type,我们可以输入字符串5.php(此处数字随意，只要在rand(1,0x36d)之间即可),转换之后也就是5,明显是在题目中生成的数组中的,满足条件，同时进入下一步后，我们就可将php代码写入文件中，然后访问文件即可查看到flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/14.png"></p>
+<h3 id="web100"><a href="#web100" class="headerlink" title="web100"></a>web100</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/15.png"></p>
+<p> v1传参是数字即可让v0为真</p>
+<p>$v2和$v3可控传参，我们可以利用注释符&#x2F;**&#x2F;将中间内容注释掉。</p>
+<p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/16.png"></p>
+<p>0x2d是-的16进制</p>
+<h3 id="web101"><a href="#web101" class="headerlink" title="web101"></a>web101</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/17.png"></p>
+<p>通过这题知道了反射类函数。</p>
+<p>ReflectionClass 通过类名获取类的信息；</p>
+<p>ReflectionObject 通过类的对象获取类的信息；</p>
+<p>ReflectionMethod 获取一个方法的有关信息。</p>
+<p>这里提示ctf在类ctfshow中，所以我们v2直接传echo new ReflectionClass，v3传;</p>
+<p>payload:?v1&#x3D;1&amp;v2&#x3D;echo new ReflectionClass&amp;v3&#x3D;;</p>
+<p>这样拼接后变为echo new ReflectionClass(‘ctfshow’);</p>
+<p>执行后直接输出ctfshow类的信息。</p>
+<h3 id="web102"><a href="#web102" class="headerlink" title="web102"></a>web102</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/18.png"></p>
+<p>题目中几个重要的php函数： substr() 字符串截取,第一个参数是截取的字符串，第二个参数是截取位数，这里截取前两位。<code>is_numeric()</code>:处理的数字有限制，所以一旦过长可能返回false，一般是18位，所以要简写！</p>
+<p>call_user_func() 调用方法或变量,第一个参数是调用的对象，第二个参数是被调用对象的参数</p>
+<p>file_put_contents() 用来写文件进去，第一个参数是文件名，第二个参数是需要写进文件中的内容 文件名支持伪协议</p>
+<p>根据上述条件分析，思路大概就是通过file_put_contents()函数来创建文件，文件中注入攻击代码即可</p>
+<p>payload： 参数分析： v1是调用方法<br> v2是数字字符串，且是写进文件中的内容 v3是文件名（可通过伪协议来创建）</p>
+<p>v3&#x3D;php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.base64-decode&#x2F;resource&#x3D;2.php v2:写进2.php的内容 ——&gt; 查看当前页面源码；&lt;?&#x3D;<code>cat *</code>; ——&gt;  转为base64为PD89YGNhdCAqYDs  ——&gt;转为16进制的ascii码为5044383959474e6864434171594473——&gt;绕过截断，在前面随意加两位数字225044383959474e6864434171594473 v1：将数字字符串还原为base64码 ——&gt; hex2bin</p>
+<p>最终payload： ?v2&#x3D;125044383959474e6864434171594473&amp;v3&#x3D;php:&#x2F;&#x2F;filter&#x2F;write&#x3D;convert.base64-decode&#x2F;resource&#x3D;1.php</p>
+<p>post传参：v1&#x3D;hex2bin</p>
+<p>然后访问1.php看源码即可</p>
+<h3 id="web103"><a href="#web103" class="headerlink" title="web103"></a>web103</h3><p>同102</p>
+<h3 id="web104"><a href="#web104" class="headerlink" title="web104"></a>web104</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/19.png"></p>
+<p>shal碰撞，但这题竟然没要求传入的值不相等，我们传入相同的值即可</p>
+<h3 id="web105"><a href="#web105" class="headerlink" title="web105"></a>web105</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/20.png"></p>
+<p>我们会以为输出flag会是最后一条echo语句。但是</p>
+<p>这题妙就妙在通过 $flag 替换 $error，然后在倒数第二步 die($error) 的时候输出的就是 flag。</p>
+<p>所以我们要让$error的值变为$flag的值。这题看到两个$，考的变量覆盖</p>
+<p>get传参：?suces&#x3D;flag</p>
+<p>post传参:error&#x3D;suces</p>
+<p>通过变量覆盖让$suces&#x3D;$flag   ，$error&#x3D;$suces</p>
+<p>也就是说我们达成了$error&#x3D;$flag的效果，所以die($error)会输出flag的值</p>
+<h3 id="web106"><a href="#web106" class="headerlink" title="web106"></a>web106</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/21.png"></p>
+<p>shal碰撞，字符串或数组绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aaO8zKZF`以及`aaK1STfY</span><br></pre></td></tr></table></figure>
+
+<h3 id="web107"><a href="#web107" class="headerlink" title="web107"></a>web107</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/22.png"></p>
+<p>要弄清楚parse_str这个函数，他会把v1字符串存储到v2数组中。</p>
+<p>我们v3随便传一个值，然后v1传的flag值等于v3值的md5值即可</p>
+<p>get传参：?v3&#x3D;0e215962017</p>
+<p>post传参：v1&#x3D;flag&#x3D;0e291242476940776845150308577824</p>
+<p>这样parse_str这个函数接受v1值后会自动创建键为flag值为0e291242476940776845150308577824的数组。</p>
+<h3 id="web108"><a href="#web108" class="headerlink" title="web108"></a>web108</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/23.png"></p>
+<p>ereg函数有个漏洞，可以用%00截断，我们传?a&#x3D;a%00这样可以绕过正则匹配。</p>
+<p>0x36d转为10进制是877，因为有字符反转函数，所以我们用778</p>
+<p>payload: ?c&#x3D;a%00778</p>
+<h3 id="web109"><a href="#web109" class="headerlink" title="web109"></a>web109</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/24.png"></p>
+<p>payload:?v1&#x3D;Exception&amp;v2&#x3D;system(‘cat f*’)</p>
+<p>要熟悉php一些内置类</p>
+<p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/25.png"></p>
+<h3 id="web110"><a href="#web110" class="headerlink" title="web110"></a>web110</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/26.png"></p>
+<p>过滤了很多符号，没关系我们可以用纯英文的字母类和函数</p>
+<p>?v1&#x3D;FilesystemIterator&amp;v2&#x3D;getcwd</p>
+<p>php内置类 利用 FilesystemIterator 获取指定目录下的所有文件</p>
+<p>getcwd()函数 获取当前工作目录 返回当前工作目录</p>
+<p>回显了fl36dga.txt，直接访问即可。</p>
 </section>
     
         

