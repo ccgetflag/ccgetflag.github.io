@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+
+  <meta name="description" content="写给自己看。
+SSTI漏洞：SSTI(Server-Side Template Injection)即是服务器端模板注入。
+模板：就是一种固定好的web格式。我们可以直接拿来用做网页。
+模板渲染：个人理解为将模板投放到网页上进行展示。
+SSTI漏洞就发生在模板被渲染的过程中。
+SSTI漏洞原理：服务">
+
+
+<link rel="alternate" href="/atom.xml" title="ccgetflag" type="application/atom+xml">
+<meta name="theme-color" content="#a1d0f6">
+<title>SSTI漏洞学习 - ccgetflag</title>
+<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<link rel="shortcut icon" href="/favicon.png">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<nav class="main-nav">
+	
+	    <a href="/">← Home</a>
+	
+	
+	    <a href="/about/">About</a>
+	
+	    <a href="/archives/">Archives</a>
+	
+	<a class="cta" href="/atom.xml" data-no-instant>Subscribe</a>
+</nav>
+
+<section id="wrapper">
+    <article class="post">
+    <header>
+        
+            <h1>SSTI漏洞学习</h1>
+        
+        <h2 class="headline">Sep 17 2024
+        
+        </h2>
+    </header>
+</article>
+<section id="post-body"><p>写给自己看。</p>
+<p>SSTI漏洞：SSTI(Server-Side Template Injection)即是服务器端模板注入。</p>
+<p>模板：就是一种固定好的web格式。我们可以直接拿来用做网页。</p>
+<p>模板渲染：个人理解为将模板投放到网页上进行展示。</p>
+<p>SSTI漏洞就发生在模板被渲染的过程中。</p>
+<p>SSTI漏洞原理：服务端接收攻击者的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了攻击者插入的可以破坏模板的语句，从而达到攻击者的目的。</p>
+<p>看两段代码就明白了</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/1.png"></p>
+<p>这个是没有ssti的代码，下面看一个存在ssti的</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/2.png"></p>
+<p>第一段代码通过<code>render_template_string(html_str, str=str)</code>将<code>str</code>作为参数传递给模板，这个<code>&#123;&#123;str&#125;&#125;</code>语法属于<strong>Jinja2模板引擎</strong>的一部分。Jinja2默认会<strong>自动对传入的变量进行HTML转义</strong>。这里没有提前进行字符串插值，而是将整个模板和 <code>str</code> 变量传递给 <code>render_template_string()</code>。<code>render_template_string()</code> 使用 Jinja2 的 <code>&#123;&#123;str&#125;&#125;</code> 语法，这意味着模板引擎知道这个 <code>str</code> 变量来自外部，并会对它进行处理。Jinja2会自动对用户输入进行HTML转义，防止注入恶意代码。</p>
+<p>在第二段代码中，使用 <code>.format(str)</code> 进行字符串插值，这意味着 <code>html_str</code> 中的 <code>&#123;0&#125;</code> 会被 <code>str</code> 变量的内容替换。替换后的 <code>html_str</code> 被传递给 <code>render_template_string()</code>，此时它已经是一个完整的HTML字符串，模板引擎只需要渲染它。因此少了渲染的过程。</p>
+<p>我们可以在本地尝试这两个代码运行结果</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/3.png"></p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/4.png"></p>
+<p>这就是ssti漏洞的体现。</p>
+</section>
+    
+        
+        <h2 class="footline">
+            <a href="/tags/web/#web">web</a>
+        </h2>
+    
+
+    <footer id="post-meta" class="clearfix">
+        <a href="/about/">
+        <img class="avatar" src="/images/avatar.png">
+        <div>
+            <span class="dark">ccgetflag</span>
+            <span></span>
+        </div>
+        </a>
+        <section id="sharing">
+            <a title="Share to Twitter" class="twitter" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=http://example.com/2024/09/17/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/ - SSTI漏洞学习 @"><span class="icon-twitter">tweet</span></a>
+            <a title="Share to Facebook" class="facebook" href="#" onclick="
+                window.open(
+                  'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+                  'facebook-share-dialog',
+                  'width=626,height=436');
+                return false;"><span class="icon-facebook-sign">Share</span>
+            </a>
+        </section>
+    </footer>
+
+
+  <section id="comment">
+    <button class="btn" id="loadcmts" onclick="cmts.load();">Load Comments</button>
+    <div id="gitment"></div>
+    <script src='/js/gitment.browser.js'></script>
+    <link rel="stylesheet" href=''>
+    <script>
+      var cmts={
+        load:function cmts(){
+          var gitment = new Gitment({
+          
+            id: "SSTI漏洞学习",
+          
+            owner: "",
+            repo: "",
+            oauth: {
+              client_id: "",
+              client_secret: "",
+            },
+          })
+          gitment.render('gitment');
+          var loadcmt = document.getElementById("loadcmts");
+          var imyourfather = loadcmt.parentNode;
+          imyourfather.removeChild(loadcmts)
+        }
+      }
+    </script>
+  </section>
+
+
+	<footer id="footer">
+	<div id="social">
+		<p class="small">©  John Doe| Powered by Hexo & 
+			<a target="_blank" rel="noopener" href="https://github.com/F0r3at/Lights"> Lights</a>
+		</p>
+	</div>
+</footer>
+
+</section>
+
+	<script src="//cdnjs.loli.net/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
+	<script data-no-instant>
+		
+		InstantClick.init('mousedown');
+	</script>
+
+
+
