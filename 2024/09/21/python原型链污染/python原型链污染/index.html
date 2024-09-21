@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+
+  <meta name="description" content="python原型链污染前言总结一下别人的博客 写给自己看
+一.类的定义https://blog.csdn.net/NBDwo/article/details/107546206
+1.面向对象最重要的概念就是 类（class） 和 实例（instance），类是抽象的模板，比如学生这个抽象的事    ">
+
+
+<link rel="alternate" href="/atom.xml" title="ccgetflag" type="application/atom+xml">
+<meta name="theme-color" content="#a1d0f6">
+<title>python原型链污染 - ccgetflag</title>
+<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+<link rel="shortcut icon" href="/favicon.png">
+
+<link rel="stylesheet" href="/css/style.css">
+
+<nav class="main-nav">
+	
+	    <a href="/">← Home</a>
+	
+	
+	    <a href="/about/">About</a>
+	
+	    <a href="/archives/">Archives</a>
+	
+	<a class="cta" href="/atom.xml" data-no-instant>Subscribe</a>
+</nav>
+
+<section id="wrapper">
+    <article class="post">
+    <header>
+        
+            <h1>python原型链污染</h1>
+        
+        <h2 class="headline">Sep 21 2024
+        
+        </h2>
+    </header>
+</article>
+<section id="post-body"><h1 id="python原型链污染"><a href="#python原型链污染" class="headerlink" title="python原型链污染"></a>python原型链污染</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>总结一下别人的博客 写给自己看</p>
+<h2 id="一-类的定义"><a href="#一-类的定义" class="headerlink" title="一.类的定义"></a>一.类的定义</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/NBDwo/article/details/107546206">https://blog.csdn.net/NBDwo/article/details/107546206</a></p>
+<p>1.面向对象最重要的概念就是 <strong>类（class）</strong> 和 <strong>实例（instance）</strong>，类是抽象的模板，比如学生这个抽象的事       物 可以用一个Student类来表示。而实例是根据类创建出来的一个个具体的“对象”，每一个对象都从类中继承有相同的方法，但各自的数据可能不同。</p>
+<p>2.python中的类是用来描述具有相同的属性和方法的对象的集合，对象是类的实例。定义类使用class关键字，后面紧跟着类名，类可以包含属性和方法，类中的函数称为方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class Student(object)://定义学生这个类。该类有__init__方法，并且这个方法包含name和score两个属性</span><br><span class="line">    def __init__(self, name, score):</span><br><span class="line">        self.name = name</span><br><span class="line">        self.score = score</span><br><span class="line">student = Student()  //定义好了类，就可以通过Student类创建出Student的实例。这就是实例化类</span><br></pre></td></tr></table></figure>
+
+<h2 id="二-什么是原型链污染"><a href="#二-什么是原型链污染" class="headerlink" title="二.什么是原型链污染"></a>二.什么是原型链污染</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Elite__zhb/article/details/131877828">https://blog.csdn.net/Elite__zhb/article/details/131877828</a></p>
+<p>Python 中的原型链污染（Prototype Pollution）是指通过修改对象原型链中的属性，对程序的行为产生意外影响或利用漏洞进行攻击的一种技术。</p>
+<h2 id="三-原型链污染原理"><a href="#三-原型链污染原理" class="headerlink" title="三.原型链污染原理"></a>三.原型链污染原理</h2><p>在 Python中，对象的属性和方法可以通过原型链继承来获取。每个对象都有一个原型，原型上定义了对象可以访问的属性和方法。当对象访问属性或方法时，会先在自身查找，如果找不到就会去原型链上的上级对象中查找，原型链污染攻击的思路是<strong>通过修改对象原型链中的属性，使得程序在访问属性或方法时得到不符合预期的结果。</strong>常见的原型链污染攻击包括修改内置对象的原型、修改全局对象的原型等</p>
+<p><strong>总的来说就是在当前类找属性，如果找不到就去往上的父类找，找到后将其值替换成我们想要修改后的值，然后程序调用该属性时会触发我们修改后的内容</strong></p>
+<h2 id="四-污染条件"><a href="#四-污染条件" class="headerlink" title="四.污染条件"></a>四.污染条件</h2><p>需要以下函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">src, dst</span>):  <span class="comment">#src为原字典，dst为目标字典</span></span><br><span class="line">    <span class="comment"># Recursive merge function</span></span><br><span class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> src.items():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>):  <span class="comment">#键值对字典形式</span></span><br><span class="line">            <span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">                merge(v, dst.get(k))  <span class="comment">#递归到字典最后一层</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dst[k] = v</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:  <span class="comment">#class形式</span></span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))  <span class="comment">#递归到最终的父类</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br></pre></td></tr></table></figure>
+
+<p>该merge合并函数，通过递归合并来修改父级属性，是CTF中常见的merge函数</p>
+<h2 id="五-污染过程"><a href="#五-污染过程" class="headerlink" title="五.污染过程"></a>五.污染过程</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">father</span>:</span><br><span class="line">    secret = <span class="string">&quot;hello&quot;</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">son_a</span>(<span class="title class_ inherited__">father</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">son_b</span>(<span class="title class_ inherited__">father</span>):</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">merge</span>(<span class="params">src, dst</span>):</span><br><span class="line">    <span class="keyword">for</span> k, v <span class="keyword">in</span> src.items():</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">hasattr</span>(dst, <span class="string">&#x27;__getitem__&#x27;</span>):</span><br><span class="line">            <span class="keyword">if</span> dst.get(k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">                merge(v, dst.get(k))</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dst[k] = v</span><br><span class="line">        <span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">            merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">setattr</span>(dst, k, v)</span><br><span class="line">instance = son_b()</span><br><span class="line">payload = &#123;</span><br><span class="line">    <span class="string">&quot;__class__&quot;</span> : &#123;</span><br><span class="line">        <span class="string">&quot;__base__&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;secret&quot;</span> : <span class="string">&quot;world&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">print</span>(son_a.secret)</span><br><span class="line"><span class="comment">#hello</span></span><br><span class="line"><span class="built_in">print</span>(instance.secret)</span><br><span class="line"><span class="comment">#hello</span></span><br><span class="line">merge(payload, instance)</span><br><span class="line"><span class="built_in">print</span>(son_a.secret)</span><br><span class="line"><span class="comment">#world</span></span><br><span class="line"><span class="built_in">print</span>(instance.secret)</span><br><span class="line"><span class="comment">#world</span></span><br></pre></td></tr></table></figure>
+
+<p>定义三个类father son_a和son_b都是father的子类。</p>
+<p>执行merge函数后，因为instance是对象类型，并且含有__class__默认属性，并且v也为字典格式，故执行这条判断语句</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span></span><br><span class="line">merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">src=&#123;</span></span><br><span class="line"><span class="string">    &quot;__class__&quot; : &#123;</span></span><br><span class="line"><span class="string">        &quot;__base__&quot; : &#123;</span></span><br><span class="line"><span class="string">            &quot;secret&quot; : &quot;world&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">dst=instance()</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>接着进行第一次递归，执行语句merge(v, getattr(dst, k))，此时合并目标通过__class__属性换成了instance对象的所属的类(<strong>son_b</strong>),然后再次通过一下判断语句进行第二次递归</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">src=&#123;</span></span><br><span class="line"><span class="string">        &quot;__base__&quot; : &#123;</span></span><br><span class="line"><span class="string">            &quot;secret&quot; : &quot;world&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">dst=son_b()</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>第二次递归之后，执行语句merge(v, getattr(dst, k))，此时合并目标通过__base__属性换成了son_b类的所属的直接父类(<strong>father</strong>)，然后进行第三次递归</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elif</span> <span class="built_in">hasattr</span>(dst, k) <span class="keyword">and</span> <span class="built_in">type</span>(v) == <span class="built_in">dict</span>:</span><br><span class="line">merge(v, <span class="built_in">getattr</span>(dst, k))</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">src=&#123;&quot;secret&quot; : &quot;world&quot;&#125;</span></span><br><span class="line"><span class="string">dst=father()</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>第三次递归时，<strong>type(v) &#x3D;&#x3D; dict</strong>为FALSE，递归结束，此时<strong>v&#x3D;“world”</strong>,不再是字典类型，然后执行语句</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setattr</span>(dst, k, v)</span><br></pre></td></tr></table></figure>
+
+<p>到此已重置<strong>father类</strong>中的<strong>secret</strong>属性的值为<strong>world</strong>，简单的链污染完成</p>
+<h2 id="六-总结"><a href="#六-总结" class="headerlink" title="六.总结"></a>六.总结</h2><p>就是利用merge函数不断向上查询到自己想替换的属性然后替换值。和ssti模板注入有点相似。</p>
+</section>
+    
+        
+        <h2 class="footline">
+            <a href="/tags/web/#web">web</a>
+        </h2>
+    
+
+    <footer id="post-meta" class="clearfix">
+        <a href="/about/">
+        <img class="avatar" src="/images/avatar.png">
+        <div>
+            <span class="dark">ccgetflag</span>
+            <span></span>
+        </div>
+        </a>
+        <section id="sharing">
+            <a title="Share to Twitter" class="twitter" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=http://example.com/2024/09/21/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/python%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/ - python原型链污染 @"><span class="icon-twitter">tweet</span></a>
+            <a title="Share to Facebook" class="facebook" href="#" onclick="
+                window.open(
+                  'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+                  'facebook-share-dialog',
+                  'width=626,height=436');
+                return false;"><span class="icon-facebook-sign">Share</span>
+            </a>
+        </section>
+    </footer>
+
+
+  <section id="comment">
+    <button class="btn" id="loadcmts" onclick="cmts.load();">Load Comments</button>
+    <div id="gitment"></div>
+    <script src='/js/gitment.browser.js'></script>
+    <link rel="stylesheet" href=''>
+    <script>
+      var cmts={
+        load:function cmts(){
+          var gitment = new Gitment({
+          
+            id: "python原型链污染",
+          
+            owner: "",
+            repo: "",
+            oauth: {
+              client_id: "",
+              client_secret: "",
+            },
+          })
+          gitment.render('gitment');
+          var loadcmt = document.getElementById("loadcmts");
+          var imyourfather = loadcmt.parentNode;
+          imyourfather.removeChild(loadcmts)
+        }
+      }
+    </script>
+  </section>
+
+
+	<footer id="footer">
+	<div id="social">
+		<p class="small">©  John Doe| Powered by Hexo & 
+			<a target="_blank" rel="noopener" href="https://github.com/F0r3at/Lights"> Lights</a>
+		</p>
+	</div>
+</footer>
+
+</section>
+
+	<script src="//cdnjs.loli.net/ajax/libs/instantclick/3.0.1/instantclick.min.js" data-no-instant></script>
+	<script data-no-instant>
+		
+		InstantClick.init('mousedown');
+	</script>
+
+
+
